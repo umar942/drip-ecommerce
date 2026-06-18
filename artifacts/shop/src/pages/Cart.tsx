@@ -40,7 +40,7 @@ export default function Cart() {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-8 md:py-12 max-w-6xl">
-      <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-8">Your Cart</h1>
+      <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-8">Your Bag</h1>
 
       {isEmpty ? (
         <div className="flex flex-col items-center justify-center py-20 bg-secondary/10 border border-border/40">
