@@ -3,11 +3,8 @@ import { useParams, Link } from "wouter";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
-=======
-import { formatPKR, formatPakistanAddress } from "@/lib/pakistan";
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
+import { formatPakistanAddress } from "@/lib/pakistan";
 
 export default function OrderDetail() {
   const { id } = useParams();
@@ -74,11 +71,7 @@ export default function OrderDetail() {
                     {item.size && <span>Size: {item.size}</span>}
                     <span>Qty: {item.quantity}</span>
                   </div>
-<<<<<<< HEAD
                   <span className="font-bold mt-2">{formatPrice(item.price * item.quantity)}</span>
-=======
-                  <span className="font-bold mt-2">{formatPKR(item.price * item.quantity)}</span>
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
                 </div>
               </div>
             ))}
@@ -91,18 +84,7 @@ export default function OrderDetail() {
             <div className="bg-secondary/10 p-4 border border-border/40 space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-<<<<<<< HEAD
                 <span>{formatPrice(order.totalPrice)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span>{formatPrice(0)}</span>
-              </div>
-              <div className="flex justify-between pt-3 border-t border-border/40 font-bold text-lg">
-                <span>Total</span>
-                <span>{formatPrice(order.totalPrice)}</span>
-=======
-                <span>{formatPKR(order.totalPrice)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping (Pakistan)</span>
@@ -110,8 +92,7 @@ export default function OrderDetail() {
               </div>
               <div className="flex justify-between pt-3 border-t border-border/40 font-bold text-lg">
                 <span>Total (PKR)</span>
-                <span>{formatPKR(order.totalPrice)}</span>
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
+                <span>{formatPrice(order.totalPrice)}</span>
               </div>
             </div>
           </div>

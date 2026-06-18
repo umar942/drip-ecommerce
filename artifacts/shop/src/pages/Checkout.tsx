@@ -20,16 +20,12 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
-=======
 import {
-  formatPKR,
   STORE_COUNTRY,
   PK_PROVINCES,
   isValidPakistanPostalCode,
 } from "@/lib/pakistan";
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
@@ -227,11 +223,7 @@ export default function Checkout() {
                   <div className="flex-1 flex flex-col justify-center">
                     <span className="text-sm font-bold line-clamp-1">{item.product.title}</span>
                     <span className="text-xs text-muted-foreground">Qty: {item.quantity}</span>
-<<<<<<< HEAD
                     <span className="text-sm font-bold mt-1">{formatPrice(item.product.price * item.quantity)}</span>
-=======
-                    <span className="text-sm font-bold mt-1">{formatPKR(item.product.price * item.quantity)}</span>
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
                   </div>
                 </div>
               ))}
@@ -240,11 +232,7 @@ export default function Checkout() {
             <div className="flex flex-col gap-3 text-sm border-t border-border/40 pt-4">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-<<<<<<< HEAD
                 <span>{formatPrice(cart.total)}</span>
-=======
-                <span>{formatPKR(cart.total)}</span>
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping (Pakistan)</span>
@@ -253,13 +241,8 @@ export default function Checkout() {
             </div>
 
             <div className="flex justify-between items-center border-t border-border/40 pt-4 mt-2">
-<<<<<<< HEAD
-              <span className="font-bold uppercase tracking-wider">Total</span>
-              <span className="font-bold text-xl">{formatPrice(cart.total)}</span>
-=======
               <span className="font-bold uppercase tracking-wider">Total (PKR)</span>
-              <span className="font-bold text-xl">{formatPKR(cart.total)}</span>
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
+              <span className="font-bold text-xl">{formatPrice(cart.total)}</span>
             </div>
 
             <Button

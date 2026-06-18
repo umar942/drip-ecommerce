@@ -5,11 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import type { OrderStatusUpdateStatus } from "@workspace/api-client-react";
-<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
-=======
-import { formatPKR } from "@/lib/pakistan";
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
 
 export default function AdminOrders() {
   const { data: orders, isLoading } = useListOrders();
@@ -55,11 +51,7 @@ export default function AdminOrders() {
                   <td className="px-4 py-4 font-mono font-bold">#{order.id}</td>
                   <td className="px-4 py-4">{order.user?.name || `User ${order.userId}`}</td>
                   <td className="px-4 py-4 text-muted-foreground">{format(new Date(order.createdAt), "MMM dd, yyyy")}</td>
-<<<<<<< HEAD
                   <td className="px-4 py-4 font-bold">{formatPrice(order.totalPrice)}</td>
-=======
-                  <td className="px-4 py-4 font-bold">{formatPKR(order.totalPrice)}</td>
->>>>>>> 76338c17e7b6863973759898537571a6d9815001
                   <td className="px-4 py-3">
                     <Select defaultValue={order.status} onValueChange={(val) => handleStatusChange(order.id, val)}>
                       <SelectTrigger className="h-8 rounded-none border-border/40 text-xs uppercase tracking-wider font-bold">

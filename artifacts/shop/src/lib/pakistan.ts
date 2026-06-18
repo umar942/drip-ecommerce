@@ -2,6 +2,8 @@ export const STORE_COUNTRY = "Pakistan";
 export const STORE_CURRENCY = "PKR";
 export const STORE_NOTICE = "We deliver across Pakistan only. All prices are in PKR.";
 
+export { formatPrice, formatPrice as formatPKR } from "./currency";
+
 export const PK_PROVINCES = [
   "Punjab",
   "Sindh",
@@ -11,10 +13,6 @@ export const PK_PROVINCES = [
   "Gilgit-Baltistan",
   "Azad Jammu and Kashmir",
 ] as const;
-
-export function formatPKR(amount: number): string {
-  return `Rs. ${Math.round(amount).toLocaleString("en-PK")}`;
-}
 
 export function formatPakistanAddress(addr: {
   line1: string;
