@@ -45,7 +45,7 @@ export default function Home() {
           >
             <Link href="/products">
               <Button size="lg" className="h-14 px-10 text-lg font-bold uppercase tracking-wider bg-white text-black hover:bg-primary hover:text-white transition-all duration-300 rounded-none">
-                Shop New Arrivals
+                Shop New Drops
               </Button>
             </Link>
           </motion.div>
@@ -56,7 +56,7 @@ export default function Home() {
       <section className="py-20 md:py-32 container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div>
-            <h2 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight text-foreground">New Drop</h2>
+            <h2 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight text-foreground">Latest Drop</h2>
             <p className="text-muted-foreground mt-2 text-lg">The latest additions to our collection.</p>
           </div>
           <Link href="/products">

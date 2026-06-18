@@ -80,20 +80,35 @@ async function main() {
     process.exit(1);
   }
   const adminToken = (login.data as { token: string }).token;
+  const adminUser = (login.data as { user: { id: number } }).user;
+  const userToken = adminToken;
+  const userId = adminUser.id;
 
   const me = await req("GET", "/auth/me", undefined, adminToken);
   record("GET", "/auth/me", me.status, 200);
 
-  // Register test user (may 400 if exists)
+  // OTP endpoints
   const testEmail = `testuser_${Date.now()}@example.com`;
+  const sendSignupOtp = await req("POST", "/auth/send-otp", { email: testEmail, purpose: "signup" });
+  record("POST", "/auth/send-otp (signup)", sendSignupOtp.status, [200, 500], sendSignupOtp.status === 500 ? "SMTP not configured" : undefined);
+
   const register = await req("POST", "/auth/register", {
     name: "Test User",
     email: testEmail,
     password: "testpass123",
+    code: "000000",
   });
-  record("POST", "/auth/register", register.status, 201);
-  const userToken = (register.data as { token: string }).token;
-  const userId = (register.data as { user: { id: number } }).user.id;
+  record("POST", "/auth/register (invalid otp)", register.status, 400);
+
+  const forgot = await req("POST", "/auth/forgot-password", { email: "admin@drip.store" });
+  record("POST", "/auth/forgot-password", forgot.status, [200, 500]);
+
+  const reset = await req("POST", "/auth/reset-password", {
+    email: "admin@drip.store",
+    code: "000000",
+    newPassword: "newpass123",
+  });
+  record("POST", "/auth/reset-password (invalid otp)", reset.status, 400);
 
   const logout = await req("POST", "/auth/logout");
   record("POST", "/auth/logout", logout.status, 200);

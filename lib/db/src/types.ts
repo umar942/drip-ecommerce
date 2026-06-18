@@ -10,6 +10,7 @@ export interface User {
   email: string;
   passwordHash: string;
   role: UserRole;
+  emailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -101,6 +102,7 @@ export const insertUserSchema = z.object({
   email: z.string().email(),
   passwordHash: z.string(),
   role: z.enum(["user", "admin", "staff"]).optional(),
+  emailVerified: z.boolean().optional(),
 });
 export type InsertUser = z.infer<typeof insertUserSchema>;
 

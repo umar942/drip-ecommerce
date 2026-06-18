@@ -57,5 +57,7 @@ async function ensureIndexes(database: Db): Promise<void> {
     database.collection("orders").createIndex({ userId: 1 }),
     database.collection("orderItems").createIndex({ id: 1 }, { unique: true }),
     database.collection("orderItems").createIndex({ orderId: 1 }),
+    database.collection("otps").createIndex({ email: 1, purpose: 1 }),
+    database.collection("otps").createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
   ]);
 }

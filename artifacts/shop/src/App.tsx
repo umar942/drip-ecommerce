@@ -18,6 +18,8 @@ import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/not-found";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -79,6 +81,8 @@ function Router() {
         {/* Auth Routes */}
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
+        <Route path="/forgot-password" component={ForgotPassword} />
+        <Route path="/reset-password" component={ResetPassword} />
         
         <Route component={NotFound} />
       </Switch>

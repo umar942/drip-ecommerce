@@ -42,7 +42,7 @@ export default function Login() {
       <div className="w-full max-w-md border border-border/40 bg-secondary/10 p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
           <h1 className="font-display text-4xl font-bold tracking-tighter text-primary uppercase mb-2">DRIP</h1>
-          <h2 className="text-xl font-bold uppercase tracking-wider text-foreground">Access Account</h2>
+          <h2 className="text-xl font-bold uppercase tracking-wider text-foreground">Account Access</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -60,7 +60,7 @@ export default function Login() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="password" className="uppercase text-xs font-bold tracking-widest text-muted-foreground">Password</Label>
-              <Link href="#" className="text-xs text-muted-foreground hover:text-primary underline-offset-4 hover:underline">Forgot?</Link>
+              <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-primary underline-offset-4 hover:underline">Forgot?</Link>
             </div>
             <Input 
               id="password" 
@@ -77,7 +77,7 @@ export default function Login() {
             disabled={loginMutation.isPending}
             className="w-full h-14 rounded-none uppercase tracking-widest font-bold text-sm"
           >
-            {loginMutation.isPending ? "Authenticating..." : "Log In"}
+            {loginMutation.isPending ? "Signing in..." : "Sign In"}
           </Button>
         </form>
         

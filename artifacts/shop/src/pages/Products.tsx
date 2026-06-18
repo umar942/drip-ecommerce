@@ -32,7 +32,7 @@ export default function Products() {
     <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight">Collection</h1>
+          <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight">Our Collection</h1>
           <p className="text-muted-foreground mt-2">Explore our premium streetwear selection.</p>
         </div>
         

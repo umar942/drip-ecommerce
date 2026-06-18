@@ -17,7 +17,7 @@ export default function Orders() {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-8 md:py-12 max-w-4xl">
-      <h1 className="font-display text-4xl font-bold uppercase tracking-tight mb-8">Order History</h1>
+      <h1 className="font-display text-4xl font-bold uppercase tracking-tight mb-8">Your Orders</h1>
 
       {orders && orders.length > 0 ? (
         <div className="flex flex-col gap-6">

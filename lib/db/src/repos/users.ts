@@ -28,6 +28,7 @@ export async function createUser(data: InsertUser): Promise<User> {
     email: data.email,
     passwordHash: data.passwordHash,
     role: data.role ?? "user",
+    emailVerified: data.emailVerified ?? false,
     createdAt: now,
     updatedAt: now,
   };
@@ -42,6 +43,15 @@ export async function updateUser(
   const result = await getDb().collection<User>(COL).findOneAndUpdate(
     { id },
     { $set: { ...updates, updatedAt: new Date() } },
+    { returnDocument: "after" },
+  );
+  return result ?? null;
+}
+
+export async function updateUserPassword(email: string, passwordHash: string): Promise<User | null> {
+  const result = await getDb().collection<User>(COL).findOneAndUpdate(
+    { email },
+    { $set: { passwordHash, updatedAt: new Date() } },
     { returnDocument: "after" },
   );
   return result ?? null;

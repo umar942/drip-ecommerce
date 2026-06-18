@@ -7,3 +7,5 @@ export * as addressesRepo from "./repos/addresses";
 export * as cartRepo from "./repos/cart";
 export * as wishlistRepo from "./repos/wishlist";
 export * as ordersRepo from "./repos/orders";
+export * as otpRepo from "./repos/otp";
+export type { OtpPurpose } from "./repos/otp";

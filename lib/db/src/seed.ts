@@ -20,6 +20,7 @@ async function seed() {
       email: "admin@drip.store",
       passwordHash,
       role: "admin",
+      emailVerified: true,
     });
     console.log("Created admin user: admin@drip.store / password");
   } else {
