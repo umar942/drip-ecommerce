@@ -24,7 +24,7 @@ export default function Wishlist() {
   const items = wishlistItems || [];
 
   const handleRemove = (productId: number) => {
-    removeMutation.mutate({ data: { productId } }, {
+    removeMutation.mutate({ productId }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getGetWishlistQueryKey() });
         toast({ title: "Removed from wishlist" });

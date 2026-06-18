@@ -1,4 +1,4 @@
-import { useGetMe, useGetUserAddresses } from "@workspace/api-client-react";
+import { useGetMe, useGetUserAddresses, getGetUserAddressesQueryKey } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
@@ -6,7 +6,10 @@ export default function Profile() {
   const { user, logout } = useAuth();
   
   const { data: addresses, isLoading: isAddressesLoading } = useGetUserAddresses(user?.id || 0, {
-    query: { enabled: !!user?.id }
+    query: {
+      queryKey: getGetUserAddressesQueryKey(user?.id || 0),
+      enabled: !!user?.id,
+    },
   });
 
   if (!user) return null;

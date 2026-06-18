@@ -4,17 +4,18 @@ import { useEffect } from "react";
 
 export function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode, adminOnly?: boolean }) {
   const { user, isLoading } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     if (!isLoading) {
       if (!user) {
-        setLocation("/login");
+        const redirect = encodeURIComponent(location);
+        setLocation(`/login?redirect=${redirect}`);
       } else if (adminOnly && user.role !== "admin") {
         setLocation("/");
       }
     }
-  }, [user, isLoading, setLocation, adminOnly]);
+  }, [user, isLoading, setLocation, adminOnly, location]);
 
   if (isLoading) {
     return (

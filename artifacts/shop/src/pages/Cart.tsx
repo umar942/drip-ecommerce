@@ -120,8 +120,8 @@ export default function Cart() {
               
               <div className="flex flex-col gap-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal ({cart.itemCount} items)</span>
-                  <span>${cart.total.toFixed(2)}</span>
+                  <span className="text-muted-foreground">Subtotal ({cart?.itemCount ?? 0} items)</span>
+                  <span>${(cart?.total ?? 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
@@ -135,7 +135,7 @@ export default function Cart() {
               
               <div className="flex justify-between items-center border-t border-border/40 pt-4 mt-2">
                 <span className="font-bold uppercase tracking-wider">Estimated Total</span>
-                <span className="font-bold text-xl">${cart.total.toFixed(2)}</span>
+                <span className="font-bold text-xl">${(cart?.total ?? 0).toFixed(2)}</span>
               </div>
               
               <Button 

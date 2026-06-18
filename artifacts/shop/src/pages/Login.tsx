@@ -21,7 +21,15 @@ export default function Login() {
       onSuccess: (data) => {
         login(data.token, data.user);
         toast({ title: "Welcome back", description: "Successfully logged in." });
-        setLocation("/");
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+        if (redirect && redirect.startsWith("/")) {
+          setLocation(redirect);
+        } else if (data.user.role === "admin") {
+          setLocation("/admin");
+        } else {
+          setLocation("/");
+        }
       },
       onError: (err) => {
         toast({ title: "Login failed", description: err.message || "Invalid credentials", variant: "destructive" });

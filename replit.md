@@ -4,20 +4,20 @@ A full-stack e-commerce platform for a premium streetwear brand. Customers can b
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
-- `pnpm --filter @workspace/shop run dev` — run the storefront (proxied at `/`)
+- `pnpm dev:api` — run the API server (port 8080)
+- `pnpm dev:shop` — run the storefront (port 3000, proxies `/api` to backend)
+- `pnpm seed` — seed admin user + sample products into MongoDB
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL`, `SESSION_SECRET`
+- Required env: `MONGODB_URI`, `SESSION_SECRET`, `PORT`
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
 - **Frontend**: React + Vite, Tailwind CSS, Framer Motion, Recharts, Wouter (routing)
 - **API**: Express 5, JWT auth (jsonwebtoken + bcryptjs)
-- **DB**: PostgreSQL + Drizzle ORM
+- **DB**: MongoDB Atlas (native driver)
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec → React Query hooks + Zod schemas)
 - **Build**: esbuild (CJS bundle for API server)
@@ -26,7 +26,7 @@ A full-stack e-commerce platform for a premium streetwear brand. Customers can b
 
 - `artifacts/shop/` — React + Vite storefront
 - `artifacts/api-server/` — Express API server
-- `lib/db/src/schema/index.ts` — Drizzle ORM schema (source of truth for DB shape)
+- `lib/db/src/` — MongoDB models, repos, and seed script
 - `lib/api-spec/openapi.yaml` — OpenAPI spec (source of truth for API contract)
 - `lib/api-client-react/src/generated/` — Orval-generated React Query hooks + Zod schemas (do not edit)
 
@@ -35,7 +35,7 @@ A full-stack e-commerce platform for a premium streetwear brand. Customers can b
 - Contract-first: OpenAPI spec → Orval codegen → typed hooks + schemas used by both client and server
 - JWT stored in `localStorage` under key `drip_token`; injected via `setAuthTokenGetter` in `artifacts/shop/src/lib/api.ts`
 - `SESSION_SECRET` env var is the JWT signing secret
-- `numeric` columns in Postgres (prices) must be `parseFloat()`-ed when building API responses
+- Prices are stored as numbers in MongoDB
 - All imports from the generated API client use `@workspace/api-client-react` (the package index) — never sub-path imports like `/src/generated/api`
 
 ## Product
@@ -53,7 +53,7 @@ _Populate as you build — explicit user instructions worth remembering across s
 - After any `lib/*` schema change, run `pnpm run typecheck:libs` before artifact typechecks — stale lib declarations cause confusing import errors
 - Never import sub-paths from `@workspace/api-client-react/src/...` — always import from the package root `@workspace/api-client-react`
 - Admin seed credentials: `admin@drip.store` / `password`
-- Products use `numeric` in DB — parseFloat price fields in all API route responses
+- Products use numeric prices in MongoDB — no parseFloat needed in API responses
 
 ## Pointers
 

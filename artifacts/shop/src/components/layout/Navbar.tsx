@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
-import { useGetCart } from "@workspace/api-client-react";
+import { useGetCart, getGetCartQueryKey } from "@workspace/api-client-react";
 import { ShoppingBag, User, Heart, Menu, X, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -13,8 +13,9 @@ export function Navbar() {
 
   const { data: cart } = useGetCart({
     query: {
+      queryKey: getGetCartQueryKey(),
       enabled: !!user,
-    }
+    },
   });
 
   const cartItemCount = cart?.itemCount || 0;

@@ -1,4 +1,4 @@
-import { useGetProduct, useAddToCart, useAddToWishlist, getGetCartQueryKey, getGetWishlistQueryKey } from "@workspace/api-client-react";
+import { useGetProduct, useAddToCart, useAddToWishlist, getGetCartQueryKey, getGetWishlistQueryKey, getGetProductQueryKey } from "@workspace/api-client-react";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -21,7 +21,10 @@ export default function ProductDetail() {
   const [mainImageIdx, setMainImageIdx] = useState(0);
 
   const { data: product, isLoading } = useGetProduct(Number(id), {
-    query: { enabled: !!id }
+    query: {
+      queryKey: getGetProductQueryKey(Number(id)),
+      enabled: !!id,
+    },
   });
 
   const addToCart = useAddToCart();

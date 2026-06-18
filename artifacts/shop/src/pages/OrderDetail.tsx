@@ -1,4 +1,4 @@
-import { useGetOrder } from "@workspace/api-client-react";
+import { useGetOrder, getGetOrderQueryKey } from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,10 @@ export default function OrderDetail() {
   const { id } = useParams();
   
   const { data: order, isLoading } = useGetOrder(Number(id), {
-    query: { enabled: !!id }
+    query: {
+      queryKey: getGetOrderQueryKey(Number(id)),
+      enabled: !!id,
+    },
   });
 
   if (isLoading) {
