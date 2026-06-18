@@ -45,7 +45,7 @@ export default function Home() {
           >
             <Link href="/products">
               <Button size="lg" className="h-14 px-10 text-lg font-bold uppercase tracking-wider bg-white text-black hover:bg-primary hover:text-white transition-all duration-300 rounded-none">
-                Shop New Arrivals
+                Shop New Drops
               </Button>
             </Link>
           </motion.div>
