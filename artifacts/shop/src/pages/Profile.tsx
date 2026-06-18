@@ -16,7 +16,7 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-8 md:py-12 max-w-4xl">
-      <h1 className="font-display text-4xl font-bold uppercase tracking-tight mb-8">My Profile</h1>
+      <h1 className="font-display text-4xl font-bold uppercase tracking-tight mb-8">My Account</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1 space-y-6">
