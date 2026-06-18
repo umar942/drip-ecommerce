@@ -42,8 +42,8 @@ async function seed() {
       {
         title: "DRIP Oversized Hoodie — Black",
         description: "Heavyweight cotton blend hoodie with embroidered logo.",
-        price: 89.99,
-        compareAtPrice: 110,
+        price: 8999,
+        compareAtPrice: 11000,
         category: "Hoodies",
         categoryId: hoodies.id,
         images: ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800"],
@@ -56,7 +56,7 @@ async function seed() {
       {
         title: "DRIP Logo Tee — White",
         description: "Premium cotton tee with minimal DRIP branding.",
-        price: 39.99,
+        price: 3999,
         category: "T-Shirts",
         categoryId: tees.id,
         images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"],
@@ -69,8 +69,8 @@ async function seed() {
       {
         title: "Cargo Pants — Olive",
         description: "Relaxed fit cargo pants with multiple pockets.",
-        price: 79.99,
-        compareAtPrice: 95,
+        price: 7999,
+        compareAtPrice: 9500,
         category: "Pants",
         categoryId: pants.id,
         images: ["https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800"],
@@ -83,7 +83,7 @@ async function seed() {
       {
         title: "DRIP Hoodie — Heather Grey",
         description: "Soft fleece hoodie in heather grey.",
-        price: 84.99,
+        price: 8499,
         category: "Hoodies",
         categoryId: hoodies.id,
         images: ["https://images.unsplash.com/photo-1578583451327-19b2b7821117?w=800"],

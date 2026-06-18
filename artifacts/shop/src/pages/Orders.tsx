@@ -2,6 +2,7 @@ import { useListOrders } from "@workspace/api-client-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { formatPKR } from "@/lib/pakistan";
 
 export default function Orders() {
   const { data: orders, isLoading } = useListOrders();
@@ -26,7 +27,7 @@ export default function Orders() {
                 <div className="flex flex-col gap-2">
                   <span className="font-mono text-sm">Order #{order.id}</span>
                   <span className="text-muted-foreground">{format(new Date(order.createdAt), "PPP")}</span>
-                  <span className="font-bold mt-2">${order.totalPrice.toFixed(2)}</span>
+                  <span className="font-bold mt-2">{formatPKR(order.totalPrice)}</span>
                 </div>
                 
                 <div className="flex flex-col sm:items-end justify-between">

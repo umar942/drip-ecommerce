@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { Search, Filter } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { formatPKR } from "@/lib/pakistan";
 
 export default function Products() {
   const [searchParams] = useState(() => new URLSearchParams(window.location.search));
@@ -15,7 +16,7 @@ export default function Products() {
   
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>(categoryParam || "all");
-  const [priceRange, setPriceRange] = useState([0, 500]);
+  const [priceRange, setPriceRange] = useState([0, 50000]);
   const [showFilters, setShowFilters] = useState(false);
 
   const { data: productsData, isLoading } = useListProducts({
@@ -79,16 +80,16 @@ export default function Products() {
             <h3 className="font-display font-bold uppercase tracking-widest text-sm mb-4 border-b border-border/40 pb-2">Price Range</h3>
             <div className="px-2">
               <Slider
-                defaultValue={[0, 500]}
-                max={1000}
-                step={10}
+                defaultValue={[0, 50000]}
+                max={50000}
+                step={500}
                 value={priceRange}
                 onValueChange={setPriceRange}
                 className="mb-4"
               />
               <div className="flex justify-between text-sm text-muted-foreground">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <span>{formatPKR(priceRange[0])}</span>
+                <span>{formatPKR(priceRange[1])}</span>
               </div>
             </div>
           </div>

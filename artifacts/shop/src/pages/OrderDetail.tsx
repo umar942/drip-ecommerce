@@ -3,6 +3,7 @@ import { useParams, Link } from "wouter";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatPKR, formatPakistanAddress } from "@/lib/pakistan";
 
 export default function OrderDetail() {
   const { id } = useParams();
@@ -69,7 +70,7 @@ export default function OrderDetail() {
                     {item.size && <span>Size: {item.size}</span>}
                     <span>Qty: {item.quantity}</span>
                   </div>
-                  <span className="font-bold mt-2">${(item.price * item.quantity).toFixed(2)}</span>
+                  <span className="font-bold mt-2">{formatPKR(item.price * item.quantity)}</span>
                 </div>
               </div>
             ))}
@@ -82,29 +83,24 @@ export default function OrderDetail() {
             <div className="bg-secondary/10 p-4 border border-border/40 space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${order.totalPrice.toFixed(2)}</span>
+                <span>{formatPKR(order.totalPrice)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span>$0.00</span>
+                <span className="text-muted-foreground">Shipping (Pakistan)</span>
+                <span>Free</span>
               </div>
               <div className="flex justify-between pt-3 border-t border-border/40 font-bold text-lg">
-                <span>Total</span>
-                <span>${order.totalPrice.toFixed(2)}</span>
+                <span>Total (PKR)</span>
+                <span>{formatPKR(order.totalPrice)}</span>
               </div>
             </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-bold uppercase tracking-tight border-b border-border/40 pb-2 mb-4">Shipping Address</h2>
+            <h2 className="text-xl font-bold uppercase tracking-tight border-b border-border/40 pb-2 mb-4">Delivery Address</h2>
             <div className="bg-secondary/10 p-4 border border-border/40 text-sm">
               {order.address ? (
-                <>
-                  <p>{order.address.line1}</p>
-                  {order.address.line2 && <p>{order.address.line2}</p>}
-                  <p>{order.address.city}, {order.address.state} {order.address.zip}</p>
-                  <p>{order.address.country}</p>
-                </>
+                <p>{formatPakistanAddress(order.address)}</p>
               ) : (
                 <p className="text-muted-foreground">No address provided</p>
               )}

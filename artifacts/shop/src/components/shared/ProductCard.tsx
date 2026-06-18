@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { formatPKR } from "@/lib/pakistan";
 import { Product } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
 
@@ -49,9 +50,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             {product.title}
           </Link>
           <div className="flex flex-col items-end shrink-0">
-            <span className="font-semibold text-foreground">${product.price.toFixed(2)}</span>
+            <span className="font-semibold text-foreground">{formatPKR(product.price)}</span>
             {product.compareAtPrice && (
-              <span className="text-xs text-muted-foreground line-through">${product.compareAtPrice.toFixed(2)}</span>
+              <span className="text-xs text-muted-foreground line-through">{formatPKR(product.compareAtPrice)}</span>
             )}
           </div>
         </div>

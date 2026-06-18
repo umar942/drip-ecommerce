@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { formatPKR } from "@/lib/pakistan";
 
 export default function Cart() {
   const [, setLocation] = useLocation();
@@ -82,7 +83,7 @@ export default function Cart() {
                         {item.size && <span>Size: {item.size}</span>}
                       </div>
                     </div>
-                    <span className="font-bold">${(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-bold">{formatPKR(item.product.price * item.quantity)}</span>
                   </div>
                   
                   <div className="mt-auto flex justify-between items-end">
@@ -121,7 +122,7 @@ export default function Cart() {
               <div className="flex flex-col gap-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal ({cart?.itemCount ?? 0} items)</span>
-                  <span>${(cart?.total ?? 0).toFixed(2)}</span>
+                  <span>{formatPKR(cart?.total ?? 0)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
@@ -135,7 +136,7 @@ export default function Cart() {
               
               <div className="flex justify-between items-center border-t border-border/40 pt-4 mt-2">
                 <span className="font-bold uppercase tracking-wider">Estimated Total</span>
-                <span className="font-bold text-xl">${(cart?.total ?? 0).toFixed(2)}</span>
+                <span className="font-bold text-xl">{formatPKR(cart?.total ?? 0)}</span>
               </div>
               
               <Button 

@@ -10,7 +10,7 @@ export function Footer() {
               <span className="font-display text-3xl font-bold tracking-tighter text-primary">DRIP</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-[250px]">
-              High-end urban streetwear. Wear your identity. Premium quality for the culture.
+              Premium streetwear for Pakistan. Delivering nationwide in PKR.
             </p>
           </div>
           
@@ -28,7 +28,7 @@ export function Footer() {
             <h3 className="text-lg font-display font-semibold mb-4 text-foreground">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="#" className="hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Shipping</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Shipping (Pakistan)</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">Returns</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">Contact Us</Link></li>
             </ul>
@@ -46,7 +46,7 @@ export function Footer() {
         
         <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} DRIP. All rights reserved.
+            &copy; {new Date().getFullYear()} DRIP Pakistan. All rights reserved.
           </p>
         </div>
       </div>

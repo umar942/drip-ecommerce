@@ -1,6 +1,7 @@
 import { useGetAdminStats, useGetRecentOrders } from "@workspace/api-client-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { format } from "date-fns";
+import { formatPKR } from "@/lib/pakistan";
 
 const PIE_COLORS = ['hsl(var(--primary))', 'hsl(var(--muted))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--destructive))'];
 
@@ -24,7 +25,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Revenue", value: `$${stats.totalRevenue.toFixed(2)}` },
+          { label: "Total Revenue", value: formatPKR(stats.totalRevenue) },
           { label: "Total Orders", value: stats.totalOrders },
           { label: "Active Products", value: stats.totalProducts },
           { label: "Registered Users", value: stats.totalUsers },
@@ -52,7 +53,7 @@ export default function AdminDashboard() {
                 <YAxis 
                   stroke="hsl(var(--muted-foreground))" 
                   fontSize={12}
-                  tickFormatter={(val) => `$${val}`}
+                  tickFormatter={(val) => formatPKR(val)}
                 />
                 <Tooltip 
                   contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: 0 }}
@@ -124,7 +125,7 @@ export default function AdminDashboard() {
                   <td className="px-4 py-4 font-mono">#{order.id}</td>
                   <td className="px-4 py-4">{order.user?.name || `User ${order.userId}`}</td>
                   <td className="px-4 py-4 text-muted-foreground">{format(new Date(order.createdAt), "MMM dd, yyyy")}</td>
-                  <td className="px-4 py-4 font-bold">${order.totalPrice.toFixed(2)}</td>
+                  <td className="px-4 py-4 font-bold">{formatPKR(order.totalPrice)}</td>
                   <td className="px-4 py-4">
                     <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest bg-secondary/50 border border-border/40">
                       {order.status}

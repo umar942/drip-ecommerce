@@ -62,7 +62,7 @@ export default function Profile() {
                     <p className="text-sm text-muted-foreground">{addr.line1}</p>
                     {addr.line2 && <p className="text-sm text-muted-foreground">{addr.line2}</p>}
                     <p className="text-sm text-muted-foreground">{addr.city}, {addr.state} {addr.zip}</p>
-                    <p className="text-sm text-muted-foreground">{addr.country}</p>
+                    <p className="text-sm text-muted-foreground font-medium">{addr.country}</p>
                   </div>
                 ))}
               </div>

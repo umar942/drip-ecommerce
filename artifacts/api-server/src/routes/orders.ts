@@ -10,6 +10,7 @@ import {
 } from "@workspace/db";
 import { requireAuth, requireAdmin, type AuthRequest } from "../lib/auth";
 import { CreateOrderBody, UpdateOrderStatusBody } from "@workspace/api-zod";
+import { isPakistanCountry } from "../lib/pakistan";
 
 const router = Router();
 
@@ -91,6 +92,20 @@ router.post("/orders", requireAuth, async (req, res): Promise<void> => {
 
   const cartItems = await cartRepo.listCartItems(userId);
   if (cartItems.length === 0) { res.status(400).json({ error: "Cart is empty" }); return; }
+
+  if (!parsed.data.addressId) {
+    res.status(400).json({ error: "A Pakistan delivery address is required" });
+    return;
+  }
+  const address = await addressesRepo.findAddressById(parsed.data.addressId);
+  if (!address || address.userId !== userId) {
+    res.status(400).json({ error: "Invalid delivery address" });
+    return;
+  }
+  if (!isPakistanCountry(address.country)) {
+    res.status(400).json({ error: "This store only ships within Pakistan" });
+    return;
+  }
 
   let total = 0;
   const orderItemData: Array<{
