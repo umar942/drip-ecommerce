@@ -21,7 +21,7 @@ export default function Register() {
     registerMutation.mutate({ data: { name, email, password } }, {
       onSuccess: (data) => {
         login(data.token, data.user);
-        toast({ title: "Account created", description: "Welcome to DRIP." });
+        toast({ title: "Account created", description: "Welcome to the DRIP family." });
         setLocation("/");
       },
       onError: (err) => {
