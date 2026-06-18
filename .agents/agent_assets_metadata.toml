@@ -1,0 +1,26 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "x7Wiq6Jb4rT78_SZ78C20"
+uri = "file://artifacts/shop/public/images/hero-bg.png"
+type = "image"
+title = "Hero streetwear background"
+
+[[generated]]
+id = "xAoGAWbON13_L2pgAQ26M"
+uri = "file://artifacts/shop/public/images/product-tshirt.png"
+type = "image"
+title = "Streetwear T-shirt product"
+
+[[generated]]
+id = "nlDh36iBOCKZ1QSqsnBHN"
+uri = "file://artifacts/shop/public/images/product-hoodie.png"
+type = "image"
+title = "Streetwear Hoodie product"
+
+[[generated]]
+id = "L03zXnkLCBRxSGKt99JAv"
+uri = "file://artifacts/shop/public/images/product-trousers.png"
+type = "image"
+title = "Streetwear Trousers product"

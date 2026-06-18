@@ -1,0 +1,118 @@
+I want to build a full-stack e-commerce web application for selling clothing items like T-shirts, trousers, hoodies, and accessories.
+
+The system must include:
+
+🌐 1. USER SIDE (Customer Website)
+
+Create a modern, responsive, and visually premium e-commerce frontend with 3D animations.
+
+Pages Required:
+Home Page (hero section with 3D animated clothing showcase)
+Product Listing Page (filters: size, color, price, category)
+Product Detail Page (3D product viewer + images + description)
+Cart Page
+Checkout Page
+Login / Signup Page
+Profile Page (order history, addresses)
+Features:
+Add to cart / remove from cart
+Wishlist system
+Product search + filters
+User authentication (JWT or session-based)
+Order tracking system
+Responsive design (mobile-first)
+🧑‍💼 2. ADMIN / STAFF PANEL
+
+Create a separate dashboard for staff/admin management.
+
+Features:
+Secure admin login
+Add / Edit / Delete products
+Upload product images + 3D model (GLB/GLTF)
+Manage inventory (stock tracking)
+View all orders
+Update order status (pending, processing, shipped, delivered)
+Manage users
+Analytics dashboard (sales, revenue, orders)
+🧠 3. BACKEND (API SERVER)
+
+Build a scalable backend API.
+
+Tech Suggestion:
+
+Node.js + Express (or NestJS)
+
+Features:
+Authentication (JWT)
+Role-based access (Admin / User / Staff)
+Product CRUD APIs
+Order management APIs
+Cart APIs
+File upload system (images + 3D models)
+Payment integration (Stripe or Razorpay)
+Database connection (MongoDB or PostgreSQL)
+🗄️ DATABASE DESIGN
+Collections / Tables:
+Users
+id
+name
+email
+password
+role (user/admin/staff)
+Products
+id
+title
+description
+price
+category
+images[]
+3D_model_url
+stock
+size options
+Orders
+id
+userId
+products[]
+totalPrice
+status
+paymentStatus
+address
+Cart
+userId
+items[]
+🎨 4. UI / UX DESIGN REQUIREMENTS
+Modern streetwear aesthetic
+Smooth animations (Framer Motion or GSAP)
+3D product viewer using:
+Three.js OR React Three Fiber
+Dark mode + light mode
+Clean typography (urban fashion style)
+High-end e-commerce feel like Nike / Zara
+🧩 5. TECH STACK (Recommended)
+Frontend:
+React.js / Next.js
+Tailwind CSS
+Three.js / React Three Fiber
+Framer Motion
+Backend:
+Node.js + Express
+JWT Authentication
+Database:
+MongoDB Atlas OR PostgreSQL
+Storage:
+Cloudinary (images)
+AWS S3 (optional for 3D models)
+🔥 6. ADVANCED FEATURES (Optional but Recommended)
+3D AR view (try clothes in AR)
+Real-time order updates (Socket.io)
+Recommendation system (AI-based)
+Coupon / discount system
+Multi-vendor support (future upgrade)
+🎯 FINAL GOAL
+
+Build a production-level e-commerce platform where:
+
+Users can shop smoothly
+Admin can fully control products/orders
+3D product visualization enhances experience
+Fast, scalable, and mobile responsive
