@@ -7,7 +7,11 @@ import { ShoppingBag, Heart, Check } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
+=======
+import { formatPKR } from "@/lib/pakistan";
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -129,9 +133,15 @@ export default function ProductDetail() {
             <div className="text-sm font-bold tracking-widest uppercase text-muted-foreground">{product.category}</div>
             <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-tight">{product.title}</h1>
             <div className="flex items-center gap-4 mt-2">
+<<<<<<< HEAD
               <span className="text-2xl font-bold">{formatPrice(product.price)}</span>
               {product.compareAtPrice && (
                 <span className="text-lg text-muted-foreground line-through">{formatPrice(product.compareAtPrice)}</span>
+=======
+              <span className="text-2xl font-bold">{formatPKR(product.price)}</span>
+              {product.compareAtPrice && (
+                <span className="text-lg text-muted-foreground line-through">{formatPKR(product.compareAtPrice)}</span>
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
               )}
             </div>
           </div>

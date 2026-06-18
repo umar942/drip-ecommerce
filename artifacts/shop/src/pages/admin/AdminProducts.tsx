@@ -1,7 +1,11 @@
 import { useListProducts } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
+=======
+import { formatPKR } from "@/lib/pakistan";
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
 
 export default function AdminProducts() {
   const { data: productsData, isLoading } = useListProducts();
@@ -44,7 +48,11 @@ export default function AdminProducts() {
                   </td>
                   <td className="px-4 py-3 font-bold">{product.title}</td>
                   <td className="px-4 py-3 uppercase tracking-wider text-xs">{product.category}</td>
+<<<<<<< HEAD
                   <td className="px-4 py-3">{formatPrice(product.price)}</td>
+=======
+                  <td className="px-4 py-3">{formatPKR(product.price)}</td>
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
                   <td className="px-4 py-3">
                     <span className={`${product.stock > 0 ? 'text-green-500' : 'text-destructive'} font-mono`}>
                       {product.stock}

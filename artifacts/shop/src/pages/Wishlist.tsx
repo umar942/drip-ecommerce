@@ -5,7 +5,11 @@ import { Trash2, HeartCrack } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
+=======
+import { formatPKR } from "@/lib/pakistan";
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
 
 export default function Wishlist() {
   const { data: wishlistItems, isLoading } = useGetWishlist();
@@ -76,7 +80,11 @@ export default function Wishlist() {
                 <Link href={`/products/${item.productId}`} className="font-bold uppercase tracking-tight hover:text-primary transition-colors line-clamp-1">
                   {item.product.title}
                 </Link>
+<<<<<<< HEAD
                 <span className="font-bold">{formatPrice(item.product.price)}</span>
+=======
+                <span className="font-bold">{formatPKR(item.product.price)}</span>
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
               </div>
 
               <div className="flex gap-2 mt-2">

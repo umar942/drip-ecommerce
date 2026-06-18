@@ -13,3 +13,34 @@
   [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.0.45:[1m3000[22m/[39m
 [2m7:09:09 PM[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
 [2m7:09:09 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m7:20:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/shared/ProductCard.tsx[22m
+[2m7:20:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/ProductDetail.tsx, /src/index.css[22m
+[2m7:20:56 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Cart.tsx, /src/index.css[22m
+[2m7:21:02 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Checkout.tsx, /src/index.css[22m
+[2m7:21:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Products.tsx, /src/index.css[22m
+[2m7:21:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Wishlist.tsx, /src/index.css[22m
+[2m7:21:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Orders.tsx, /src/index.css[22m
+[2m7:21:25 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/OrderDetail.tsx, /src/index.css[22m
+[2m7:21:29 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/admin/AdminProducts.tsx, /src/index.css[22m
+[2m7:21:34 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/admin/AdminOrders.tsx, /src/index.css[22m
+[2m7:21:41 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/admin/AdminDashboard.tsx, /src/index.css[22m
+[2m7:21:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Products.tsx, /src/index.css[22m
+[2m7:21:58 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/admin/AdminDashboard.tsx, /src/index.css[22m
+[2m7:24:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/shared/ProductCard.tsx, /src/pages/ProductDetail.tsx, /src/pages/Cart.tsx, /src/pages/Checkout.tsx, /src/pages/Products.tsx, /src/pages/Wishlist.tsx, /src/pages/Orders.tsx, /src/pages/OrderDetail.tsx, /src/pages/admin/AdminProducts.tsx, /src/pages/admin/AdminOrders.tsx, /src/pages/admin/AdminDashboard.tsx[22m
+[2m7:25:58 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Products.tsx, /src/index.css[22m
+[2m7:26:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/layout/Navbar.tsx[22m
+[2m7:26:23 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Home.tsx, /src/index.css[22m
+[2m7:26:29 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/layout/Footer.tsx[22m
+[2m7:35:25 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Products.tsx, /src/index.css[22m
+[2m7:37:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[2m7:37:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Cart.tsx, /src/index.css[22m
+[2m7:37:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Home.tsx, /src/index.css[22m
+[2m7:37:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Login.tsx, /src/index.css[22m
+[2m7:37:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Orders.tsx, /src/index.css[22m
+[2m7:37:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Products.tsx, /src/index.css[22m
+[2m7:37:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Profile.tsx, /src/index.css[22m
+[2m7:37:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Register.tsx, /src/index.css[22m
+[2m7:37:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Wishlist.tsx, /src/index.css[22m
+[2m7:37:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/not-found.tsx, /src/index.css[22m
+[2m7:37:50 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ new dependencies optimized: [33minput-otp[32m[39m
+[2m7:37:50 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ optimized dependencies changed. reloading[39m

@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
+=======
+import { formatPKR } from "@/lib/pakistan";
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
 
 export default function Cart() {
   const [, setLocation] = useLocation();
@@ -83,7 +87,11 @@ export default function Cart() {
                         {item.size && <span>Size: {item.size}</span>}
                       </div>
                     </div>
+<<<<<<< HEAD
                     <span className="font-bold">{formatPrice(item.product.price * item.quantity)}</span>
+=======
+                    <span className="font-bold">{formatPKR(item.product.price * item.quantity)}</span>
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
                   </div>
                   
                   <div className="mt-auto flex justify-between items-end">
@@ -122,7 +130,11 @@ export default function Cart() {
               <div className="flex flex-col gap-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal ({cart?.itemCount ?? 0} items)</span>
+<<<<<<< HEAD
                   <span>{formatPrice(cart?.total ?? 0)}</span>
+=======
+                  <span>{formatPKR(cart?.total ?? 0)}</span>
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
@@ -136,7 +148,11 @@ export default function Cart() {
               
               <div className="flex justify-between items-center border-t border-border/40 pt-4 mt-2">
                 <span className="font-bold uppercase tracking-wider">Estimated Total</span>
+<<<<<<< HEAD
                 <span className="font-bold text-xl">{formatPrice(cart?.total ?? 0)}</span>
+=======
+                <span className="font-bold text-xl">{formatPKR(cart?.total ?? 0)}</span>
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
               </div>
               
               <Button 

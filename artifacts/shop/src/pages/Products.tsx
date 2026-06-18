@@ -8,7 +8,11 @@ import { Slider } from "@/components/ui/slider";
 import { Search, Filter } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+<<<<<<< HEAD
 import { formatPrice } from "@/lib/currency";
+=======
+import { formatPKR } from "@/lib/pakistan";
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
 
 export default function Products() {
   const [searchParams] = useState(() => new URLSearchParams(window.location.search));
@@ -16,7 +20,11 @@ export default function Products() {
   
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>(categoryParam || "all");
+<<<<<<< HEAD
   const [priceRange, setPriceRange] = useState([0, 5000]);
+=======
+  const [priceRange, setPriceRange] = useState([0, 50000]);
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
   const [showFilters, setShowFilters] = useState(false);
 
   const { data: productsData, isLoading } = useListProducts({
@@ -84,16 +92,27 @@ export default function Products() {
             <h3 className="font-display font-bold uppercase tracking-widest text-sm mb-4 border-b border-border/40 pb-2">Price Range</h3>
             <div className="px-2">
               <Slider
+<<<<<<< HEAD
                 defaultValue={[0, 5000]}
                 max={5000}
                 step={100}
+=======
+                defaultValue={[0, 50000]}
+                max={50000}
+                step={500}
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
                 value={priceRange}
                 onValueChange={setPriceRange}
                 className="mb-4"
               />
               <div className="flex justify-between text-sm text-muted-foreground">
+<<<<<<< HEAD
                 <span>{formatPrice(priceRange[0])}</span>
                 <span>{formatPrice(priceRange[1])}</span>
+=======
+                <span>{formatPKR(priceRange[0])}</span>
+                <span>{formatPKR(priceRange[1])}</span>
+>>>>>>> 76338c17e7b6863973759898537571a6d9815001
               </div>
             </div>
           </div>

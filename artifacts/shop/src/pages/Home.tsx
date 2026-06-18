@@ -36,7 +36,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10"
           >
-            Premium streetwear designed for the bold. Uncompromising quality. Unapologetic aesthetic.
+            Premium streetwear for Pakistan. Nationwide delivery. Prices in PKR.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

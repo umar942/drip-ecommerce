@@ -147,11 +147,11 @@ async function main() {
     "POST",
     `/users/${userId}/addresses`,
     {
-      line1: "123 Test St",
-      city: "NYC",
-      state: "NY",
-      country: "US",
-      zip: "10001",
+      line1: "House 12, Street 5, Gulberg",
+      city: "Lahore",
+      state: "Punjab",
+      country: "Pakistan",
+      zip: "54000",
       label: "Home",
       isDefault: true,
     },
@@ -216,7 +216,7 @@ async function main() {
     "/products",
     {
       title: "API Test Product",
-      price: 49.99,
+      price: 4999,
       category: "Test Category",
       categoryId: catId,
       stock: 10,
@@ -232,7 +232,7 @@ async function main() {
   const patchProd = await req(
     "PATCH",
     `/products/${newProdId}`,
-    { title: "API Test Product Updated", price: 59.99 },
+    { title: "API Test Product Updated", price: 5999 },
     adminToken,
   );
   record("PATCH", `/products/${newProdId}`, patchProd.status, 200);

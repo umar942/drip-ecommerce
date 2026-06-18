@@ -2,6 +2,7 @@ import { Router } from "express";
 import { usersRepo, addressesRepo, type User, type Address } from "@workspace/db";
 import { requireAdmin, requireAuth, type AuthRequest } from "../lib/auth";
 import { UpdateUserBody, AddUserAddressBody } from "@workspace/api-zod";
+import { STORE_COUNTRY, validatePakistanAddress } from "../lib/pakistan";
 
 const router = Router();
 
@@ -79,13 +80,19 @@ router.post("/users/:id/addresses", requireAuth, async (req, res): Promise<void>
   const parsed = AddUserAddressBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
 
+  const addressError = validatePakistanAddress({
+    country: parsed.data.country,
+    zip: parsed.data.zip,
+  });
+  if (addressError) { res.status(400).json({ error: addressError }); return; }
+
   const address = await addressesRepo.createAddress({
     userId: id,
     line1: parsed.data.line1,
     city: parsed.data.city,
     state: parsed.data.state,
-    country: parsed.data.country,
-    zip: parsed.data.zip,
+    country: STORE_COUNTRY,
+    zip: parsed.data.zip.trim(),
     label: parsed.data.label ?? null,
     line2: parsed.data.line2 ?? null,
     isDefault: parsed.data.isDefault ?? false,
