@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 import { usersRepo, otpRepo } from "@workspace/db";
 import { signToken, requireAuth, type AuthRequest } from "../lib/auth";
 import { sendOtpEmail } from "../lib/email";
+import { logger } from "../lib/logger";
 import { LoginBody } from "@workspace/api-zod";
 
 const router = Router();
@@ -78,8 +79,12 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
   try {
     await sendOtpEmail(email, purpose, code);
   } catch (err) {
-    console.error("Failed to send OTP email:", err);
-    res.status(500).json({ error: "Failed to send verification email. Check SMTP settings." });
+    logger.error({ err, email, purpose }, "Failed to send OTP email");
+    const hint =
+      err instanceof Error && err.message.includes("Invalid login")
+        ? "Gmail rejected the app password. Create a new App Password at myaccount.google.com/apppasswords and update SMTP_PASS in .env, then restart the API."
+        : "Failed to send verification email. Check SMTP settings in .env and restart the API server.";
+    res.status(500).json({ error: hint });
     return;
   }
 
@@ -171,8 +176,8 @@ router.post("/auth/forgot-password", async (req, res): Promise<void> => {
       try {
         await sendOtpEmail(email, "reset", code);
       } catch (err) {
-        console.error("Failed to send reset email:", err);
-        res.status(500).json({ error: "Failed to send reset email. Check SMTP settings." });
+        logger.error({ err, email }, "Failed to send reset email");
+        res.status(500).json({ error: "Failed to send reset email. Check SMTP settings in .env." });
         return;
       }
     }

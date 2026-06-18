@@ -36,7 +36,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10"
           >
-            Premium streetwear for Pakistan. Nationwide delivery. Prices in PKR.
+            Premium streetwear for Pakistan. Nationwide delivery.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -44,7 +44,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             <Link href="/products">
-              <Button size="lg" className="h-14 px-10 text-lg font-bold uppercase tracking-wider bg-white text-black hover:bg-primary hover:text-white transition-all duration-300 rounded-none">
+              <Button size="lg" className="h-14 px-10 text-lg font-bold uppercase border rounded-lg tracking-wider bg-white text-black hover:bg-primary hover:text-white transition-all duration-300 ">
                 Shop New Drops
               </Button>
             </Link>

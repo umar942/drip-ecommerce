@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import type { OtpPurpose } from "@workspace/db";
+import { logger } from "./logger";
 
 const RED = "#ff0000";
 const BLACK = "#0a0a0a";
@@ -14,10 +15,12 @@ function getSmtpConfig() {
   if (!user || !pass) {
     throw new Error("SMTP_USER and SMTP_PASS must be set in .env (use a Gmail App Password)");
   }
+  const port = Number(process.env.SMTP_PORT ?? 587);
   return {
     host: process.env.SMTP_HOST ?? "smtp.gmail.com",
-    port: Number(process.env.SMTP_PORT ?? 587),
-    secure: false,
+    port,
+    secure: port === 465,
+    requireTLS: port === 587,
     auth: { user, pass },
   };
 }
@@ -150,27 +153,37 @@ export async function sendOtpEmail(to: string, purpose: OtpPurpose, code: string
   const transporter = nodemailer.createTransport(getSmtpConfig());
   const { subject, html } = buildEmailContent(purpose, code);
 
-  await transporter.sendMail({
-    from: getFromAddress(),
-    to,
-    subject,
-    html,
-    // Minimal plain fallback — HTML is primary
-    text: `DRIP\n\nYour code: ${code}\n\nExpires in 10 minutes.`,
-    alternatives: [
-      {
-        contentType: "text/html; charset=UTF-8",
-        content: html,
-      },
-    ],
-  });
+  try {
+    await transporter.sendMail({
+      from: getFromAddress(),
+      to,
+      subject,
+      html,
+      text: `DRIP\n\nYour code: ${code}\n\nExpires in 10 minutes.`,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error({ err, to, purpose }, "SMTP send failed");
+    throw new Error(`SMTP send failed: ${message}`);
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    logger.info(
+      { to, purpose },
+      `[DEV] OTP for ${to} (${purpose}): ${code} — check inbox/spam if not received`,
+    );
+  }
 }
 
 export async function verifySmtpConnection(): Promise<boolean> {
   try {
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS?.replace(/\s+/g, "");
+    if (!user || !pass) return false;
     await nodemailer.createTransport(getSmtpConfig()).verify();
     return true;
-  } catch {
+  } catch (err) {
+    logger.error({ err }, "SMTP verify failed");
     return false;
   }
 }

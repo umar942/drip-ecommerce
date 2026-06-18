@@ -19,12 +19,15 @@ export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setLoading(true);
     try {
       await sendOtp(email, "signup");
-      toast({ title: "Code sent", description: `Check ${email} for your 6-digit code.` });
+      toast({
+        title: "Code sent",
+        description: `Check ${email} (and Spam/Promotions) for your 6-digit code.`,
+      });
       setStep("otp");
     } catch (err) {
       toast({
@@ -94,6 +97,9 @@ export default function Register() {
             <p className="text-sm text-muted-foreground text-center">
               We sent a code to <span className="font-medium text-foreground">{email}</span>
             </p>
+            <p className="text-xs text-muted-foreground text-center">
+              Not there? Check Spam or Promotions, or wait 1 minute and resend.
+            </p>
             <div className="flex justify-center">
               <InputOTP maxLength={6} value={code} onChange={setCode}>
                 <InputOTPGroup>
@@ -108,6 +114,15 @@ export default function Register() {
             </div>
             <Button type="submit" disabled={loading || code.length !== 6} className="w-full h-14 rounded-none uppercase tracking-widest font-bold text-sm">
               {loading ? "Creating..." : "Verify & Join"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full rounded-none"
+              disabled={loading}
+              onClick={() => handleSendOtp()}
+            >
+              {loading ? "Sending..." : "Resend code"}
             </Button>
             <Button type="button" variant="ghost" className="w-full" disabled={loading} onClick={() => setStep("form")}>
               Change email

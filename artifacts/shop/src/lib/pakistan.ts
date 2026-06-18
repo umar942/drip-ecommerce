@@ -1,6 +1,6 @@
 export const STORE_COUNTRY = "Pakistan";
 export const STORE_CURRENCY = "PKR";
-export const STORE_NOTICE = "We deliver across Pakistan only. All prices are in PKR.";
+export const STORE_NOTICE = "We deliver across Pakistan only.";
 
 export { formatPrice, formatPrice as formatPKR } from "./currency";
 

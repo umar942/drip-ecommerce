@@ -42,6 +42,7 @@ export default function ForgotPassword() {
           <div className="space-y-6 text-center">
             <p className="text-muted-foreground text-sm">
               If <span className="text-foreground font-medium">{email}</span> is registered, we sent a 6-digit reset code.
+              Check Spam/Promotions if you do not see it within a minute.
             </p>
             <Link href={`/reset-password?email=${encodeURIComponent(email)}`}>
               <Button className="w-full h-14 rounded-none uppercase tracking-widest font-bold text-sm">
