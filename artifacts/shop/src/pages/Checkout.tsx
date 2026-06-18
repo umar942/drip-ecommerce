@@ -26,6 +26,47 @@ import {
   PK_PROVINCES,
   isValidPakistanPostalCode,
 } from "@/lib/pakistan";
+import { cn } from "@/lib/utils";
+import { Banknote, CreditCard, Smartphone } from "lucide-react";
+
+type PaymentMethodId = "cod" | "card" | "easypaisa" | "jazzcash";
+
+const PAYMENT_METHODS: Array<{
+  id: PaymentMethodId;
+  label: string;
+  description: string;
+  available: boolean;
+  icon: typeof Banknote;
+}> = [
+  {
+    id: "cod",
+    label: "Cash on Delivery (COD)",
+    description: "Pay in cash when your order is delivered",
+    available: true,
+    icon: Banknote,
+  },
+  {
+    id: "card",
+    label: "Debit / Credit Card",
+    description: "Visa, Mastercard & local cards",
+    available: false,
+    icon: CreditCard,
+  },
+  {
+    id: "easypaisa",
+    label: "EasyPaisa",
+    description: "Pay with your EasyPaisa wallet",
+    available: false,
+    icon: Smartphone,
+  },
+  {
+    id: "jazzcash",
+    label: "JazzCash",
+    description: "Pay with your JazzCash wallet",
+    available: false,
+    icon: Smartphone,
+  },
+];
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
@@ -36,6 +77,7 @@ export default function Checkout() {
   const createOrder = useCreateOrder();
   const addAddress = useAddUserAddress();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>("cod");
 
   const [formData, setFormData] = useState({
     line1: "",
@@ -85,13 +127,16 @@ export default function Checkout() {
       const order = await createOrder.mutateAsync({
         data: {
           addressId: address.id,
-          paymentMethod: "card",
+          paymentMethod: "cod",
         },
       });
 
       queryClient.invalidateQueries({ queryKey: getGetCartQueryKey() });
       queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
-      toast({ title: "Order placed", description: "Your order will be delivered within Pakistan." });
+      toast({
+        title: "Order placed",
+        description: "Your COD order will be delivered within Pakistan.",
+      });
       setLocation(`/orders/${order.id}`);
     } catch (err) {
       toast({
@@ -200,10 +245,46 @@ export default function Checkout() {
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-xl font-bold uppercase tracking-tight border-b border-border/40 pb-2">Payment</h2>
-              <div className="p-4 border border-border/40 bg-secondary/10 text-center text-muted-foreground text-sm">
-                Cash on delivery and card payments accepted (demo — no real charge).
+              <h2 className="text-xl font-bold uppercase tracking-tight border-b border-border/40 pb-2">Payment Method</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {PAYMENT_METHODS.map((method) => {
+                  const Icon = method.icon;
+                  const selected = paymentMethod === method.id;
+                  return (
+                    <button
+                      key={method.id}
+                      type="button"
+                      disabled={!method.available}
+                      onClick={() => method.available && setPaymentMethod(method.id)}
+                      className={cn(
+                        "relative flex flex-col items-start gap-2 border p-4 text-left transition-colors rounded-none",
+                        method.available
+                          ? selected
+                            ? "border-primary bg-primary/10"
+                            : "border-border/40 bg-secondary/5 hover:border-primary/50"
+                          : "border-border/30 bg-secondary/5 opacity-60 cursor-not-allowed",
+                      )}
+                    >
+                      {!method.available && (
+                        <span className="absolute top-2 right-2 text-[10px] font-bold uppercase tracking-widest bg-muted text-muted-foreground px-2 py-0.5">
+                          Coming Soon
+                        </span>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <Icon className={cn("h-5 w-5", selected && method.available ? "text-primary" : "text-muted-foreground")} />
+                        <span className="font-bold text-sm uppercase tracking-wide">{method.label}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">{method.description}</span>
+                      {method.available && selected && (
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Selected</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
+              <p className="text-xs text-muted-foreground">
+                Only Cash on Delivery is available right now. Card, EasyPaisa, and JazzCash are coming soon.
+              </p>
             </div>
           </form>
         </div>
@@ -251,7 +332,7 @@ export default function Checkout() {
               disabled={isSubmitting}
               className="w-full h-14 rounded-none uppercase tracking-widest font-bold text-sm mt-4"
             >
-              {isSubmitting ? "Processing..." : "Place Order"}
+              {isSubmitting ? "Processing..." : "Place Order (COD)"}
             </Button>
           </div>
         </div>

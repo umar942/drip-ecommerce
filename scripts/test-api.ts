@@ -167,7 +167,7 @@ async function main() {
   const createOrder = await req(
     "POST",
     "/orders",
-    { addressId, paymentMethod: "card" },
+    { addressId, paymentMethod: "cod" },
     userToken,
   );
   record("POST", "/orders", createOrder.status, 201);

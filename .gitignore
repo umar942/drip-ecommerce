@@ -47,3 +47,7 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# User-uploaded product images (local dev)
+artifacts/shop/public/uploads/products/*
+!artifacts/shop/public/uploads/products/.gitkeep

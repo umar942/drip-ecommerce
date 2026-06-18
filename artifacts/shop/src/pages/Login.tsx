@@ -1,32 +1,48 @@
 import { useLogin } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
+import { isAdminRole } from "@/lib/roles";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loginMutation = useLogin();
-  const { login } = useAuth();
+  const { login, user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      if (isAdminRole(user.role)) {
+        setLocation("/admin");
+      }
+    }
+  }, [user, isLoading, setLocation]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate({ data: { email, password } }, {
       onSuccess: (data) => {
+        if (isAdminRole(data.user.role)) {
+          toast({
+            title: "Admin account",
+            description: "Please sign in at the admin portal.",
+            variant: "destructive",
+          });
+          setLocation("/admin/login");
+          return;
+        }
         login(data.token, data.user);
         toast({ title: "Welcome back", description: "Successfully logged in." });
         const params = new URLSearchParams(window.location.search);
         const redirect = params.get("redirect");
-        if (redirect && redirect.startsWith("/")) {
+        if (redirect && redirect.startsWith("/") && !redirect.startsWith("/admin")) {
           setLocation(redirect);
-        } else if (data.user.role === "admin") {
-          setLocation("/admin");
         } else {
           setLocation("/");
         }
@@ -87,6 +103,12 @@ export default function Login() {
             Create One
           </Link>
         </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          Store admin?{" "}
+          <Link href="/admin/login" className="font-bold text-foreground hover:text-primary uppercase tracking-wider underline underline-offset-4">
+            Admin Portal
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -1,8 +1,17 @@
 import { useAuth } from "@/lib/auth";
+import { isAdminRole } from "@/lib/roles";
 import { useLocation } from "wouter";
 import { useEffect } from "react";
 
-export function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode, adminOnly?: boolean }) {
+export function ProtectedRoute({
+  children,
+  adminOnly = false,
+  loginPath = "/login",
+}: {
+  children: React.ReactNode;
+  adminOnly?: boolean;
+  loginPath?: string;
+}) {
   const { user, isLoading } = useAuth();
   const [location, setLocation] = useLocation();
 
@@ -10,12 +19,12 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
     if (!isLoading) {
       if (!user) {
         const redirect = encodeURIComponent(location);
-        setLocation(`/login?redirect=${redirect}`);
-      } else if (adminOnly && user.role !== "admin") {
+        setLocation(`${loginPath}?redirect=${redirect}`);
+      } else if (adminOnly && !isAdminRole(user.role)) {
         setLocation("/");
       }
     }
-  }, [user, isLoading, setLocation, adminOnly, location]);
+  }, [user, isLoading, setLocation, adminOnly, location, loginPath]);
 
   if (isLoading) {
     return (
@@ -26,7 +35,7 @@ export function ProtectedRoute({ children, adminOnly = false }: { children: Reac
   }
 
   if (!user) return null;
-  if (adminOnly && user.role !== "admin") return null;
+  if (adminOnly && !isAdminRole(user.role)) return null;
 
   return <>{children}</>;
 }

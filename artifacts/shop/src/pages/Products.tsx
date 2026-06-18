@@ -3,8 +3,6 @@ import { useLocation } from "wouter";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Search, Filter } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -81,21 +79,36 @@ export default function Products() {
           </div>
 
           <div>
-            <h3 className="font-display font-bold uppercase tracking-widest text-sm mb-4 border-b border-border/40 pb-2">Price Range</h3>
-            <div className="px-2">
-              <Slider
-                defaultValue={[0, 5000]}
-                max={5000}
-                step={100}
-                value={priceRange}
-                onValueChange={setPriceRange}
-                className="mb-4"
-              />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>{formatPrice(priceRange[0])}</span>
-                <span>{formatPrice(priceRange[1])}</span>
+            <h3 className="font-display font-bold uppercase tracking-widest text-sm mb-4 border-b border-border/40 pb-2">Price Range (PKR)</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground uppercase tracking-wider">Min</label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={priceRange[0]}
+                  onChange={(e) =>
+                    setPriceRange([Number(e.target.value) || 0, priceRange[1]])
+                  }
+                  className="rounded-none border-border/40 h-9"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground uppercase tracking-wider">Max</label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={priceRange[1]}
+                  onChange={(e) =>
+                    setPriceRange([priceRange[0], Number(e.target.value) || 0])
+                  }
+                  className="rounded-none border-border/40 h-9"
+                />
               </div>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {formatPrice(priceRange[0])} – {formatPrice(priceRange[1])}
+            </p>
           </div>
         </div>
 

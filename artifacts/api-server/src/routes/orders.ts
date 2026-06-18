@@ -130,13 +130,20 @@ router.post("/orders", requireAuth, async (req, res): Promise<void> => {
     });
   }
 
+  const method = parsed.data.paymentMethod ?? "cod";
+  const availableMethods = new Set(["cod"]);
+  if (!availableMethods.has(method)) {
+    res.status(400).json({ error: "This payment method is not available yet" });
+    return;
+  }
+
   const order = await ordersRepo.createOrder(
     {
       userId,
       totalPrice: Math.round(total * 100) / 100,
       addressId: parsed.data.addressId ?? null,
-      paymentMethod: parsed.data.paymentMethod ?? "card",
-      paymentStatus: "paid",
+      paymentMethod: method,
+      paymentStatus: method === "cod" ? "pending" : "paid",
       status: "pending",
     },
     orderItemData,

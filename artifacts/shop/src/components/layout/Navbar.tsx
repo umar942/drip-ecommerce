@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useGetCart, getGetCartQueryKey } from "@workspace/api-client-react";
-import { ShoppingBag, User, Heart, Menu, X, LogOut, Shield } from "lucide-react";
+import { ShoppingBag, User, Heart, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -49,14 +49,6 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                {user.role === 'admin' && (
-                  <Link href="/admin">
-                    <Button variant="ghost" size="icon" className="text-foreground/80 hover:text-primary">
-                      <Shield className="h-5 w-5" />
-                      <span className="sr-only">Admin</span>
-                    </Button>
-                  </Link>
-                )}
                 <Link href="/wishlist">
                   <Button variant="ghost" size="icon" className="text-foreground/80 hover:text-primary">
                     <Heart className="h-5 w-5" />
@@ -127,11 +119,6 @@ export function Navbar() {
               <div className="h-px bg-border/40 my-2" />
               {user ? (
                 <>
-                  {user.role === 'admin' && (
-                    <Link href="/admin" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
-                      Admin Dashboard
-                    </Link>
-                  )}
                   <Link href="/profile" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                     Profile
                   </Link>
