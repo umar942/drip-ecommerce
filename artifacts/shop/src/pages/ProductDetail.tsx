@@ -7,6 +7,7 @@ import { ShoppingBag, Heart, Check } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { formatPrice } from "@/lib/currency";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -128,9 +129,9 @@ export default function ProductDetail() {
             <div className="text-sm font-bold tracking-widest uppercase text-muted-foreground">{product.category}</div>
             <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-tight">{product.title}</h1>
             <div className="flex items-center gap-4 mt-2">
-              <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{formatPrice(product.price)}</span>
               {product.compareAtPrice && (
-                <span className="text-lg text-muted-foreground line-through">${product.compareAtPrice.toFixed(2)}</span>
+                <span className="text-lg text-muted-foreground line-through">{formatPrice(product.compareAtPrice)}</span>
               )}
             </div>
           </div>

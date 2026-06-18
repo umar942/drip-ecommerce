@@ -19,8 +19,8 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/products" className="hover:text-primary transition-colors">All Products</Link></li>
               <li><Link href="/products?category=new" className="hover:text-primary transition-colors">New Arrivals</Link></li>
-              <li><Link href="/products?category=t-shirts" className="hover:text-primary transition-colors">T-Shirts</Link></li>
-              <li><Link href="/products?category=hoodies" className="hover:text-primary transition-colors">Hoodies</Link></li>
+              <li><Link href="/products?category=T-Shirts" className="hover:text-primary transition-colors">T-Shirts</Link></li>
+              <li><Link href="/products?category=Trousers" className="hover:text-primary transition-colors">Trousers</Link></li>
             </ul>
           </div>
 

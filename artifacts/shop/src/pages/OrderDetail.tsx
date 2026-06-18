@@ -3,6 +3,7 @@ import { useParams, Link } from "wouter";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/currency";
 
 export default function OrderDetail() {
   const { id } = useParams();
@@ -69,7 +70,7 @@ export default function OrderDetail() {
                     {item.size && <span>Size: {item.size}</span>}
                     <span>Qty: {item.quantity}</span>
                   </div>
-                  <span className="font-bold mt-2">${(item.price * item.quantity).toFixed(2)}</span>
+                  <span className="font-bold mt-2">{formatPrice(item.price * item.quantity)}</span>
                 </div>
               </div>
             ))}
@@ -82,15 +83,15 @@ export default function OrderDetail() {
             <div className="bg-secondary/10 p-4 border border-border/40 space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${order.totalPrice.toFixed(2)}</span>
+                <span>{formatPrice(order.totalPrice)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
-                <span>$0.00</span>
+                <span>{formatPrice(0)}</span>
               </div>
               <div className="flex justify-between pt-3 border-t border-border/40 font-bold text-lg">
                 <span>Total</span>
-                <span>${order.totalPrice.toFixed(2)}</span>
+                <span>{formatPrice(order.totalPrice)}</span>
               </div>
             </div>
           </div>

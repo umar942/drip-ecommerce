@@ -88,18 +88,14 @@ export default function Home() {
       {/* Categories */}
       <section className="py-12 bg-secondary/30">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link href="/products?category=t-shirts" className="group relative h-[400px] overflow-hidden bg-black flex items-center justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link href="/products?category=T-Shirts" className="group relative h-[400px] overflow-hidden bg-black flex items-center justify-center">
               <img src="/images/product-tshirt.png" alt="T-Shirts" className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110" />
               <h3 className="relative z-10 font-display text-3xl font-bold text-white uppercase tracking-widest drop-shadow-md group-hover:text-primary transition-colors">T-Shirts</h3>
             </Link>
-            <Link href="/products?category=hoodies" className="group relative h-[400px] overflow-hidden bg-black flex items-center justify-center">
-              <img src="/images/product-hoodie.png" alt="Hoodies" className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110" />
-              <h3 className="relative z-10 font-display text-3xl font-bold text-white uppercase tracking-widest drop-shadow-md group-hover:text-primary transition-colors">Hoodies</h3>
-            </Link>
-            <Link href="/products?category=bottoms" className="group relative h-[400px] overflow-hidden bg-black flex items-center justify-center">
-              <img src="/images/product-trousers.png" alt="Bottoms" className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110" />
-              <h3 className="relative z-10 font-display text-3xl font-bold text-white uppercase tracking-widest drop-shadow-md group-hover:text-primary transition-colors">Bottoms</h3>
+            <Link href="/products?category=Trousers" className="group relative h-[400px] overflow-hidden bg-black flex items-center justify-center">
+              <img src="/images/product-trousers.png" alt="Trousers" className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110" />
+              <h3 className="relative z-10 font-display text-3xl font-bold text-white uppercase tracking-widest drop-shadow-md group-hover:text-primary transition-colors">Trousers</h3>
             </Link>
           </div>
         </div>

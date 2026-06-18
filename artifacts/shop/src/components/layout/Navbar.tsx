@@ -36,14 +36,11 @@ export function Navbar() {
             <Link href="/products" className="transition-colors hover:text-primary text-foreground/80">
               Shop All
             </Link>
-            <Link href="/products?category=t-shirts" className="transition-colors hover:text-primary text-foreground/80">
+            <Link href="/products?category=T-Shirts" className="transition-colors hover:text-primary text-foreground/80">
               T-Shirts
             </Link>
-            <Link href="/products?category=hoodies" className="transition-colors hover:text-primary text-foreground/80">
-              Hoodies
-            </Link>
-            <Link href="/products?category=bottoms" className="transition-colors hover:text-primary text-foreground/80">
-              Bottoms
+            <Link href="/products?category=Trousers" className="transition-colors hover:text-primary text-foreground/80">
+              Trousers
             </Link>
           </nav>
         </div>
@@ -121,14 +118,11 @@ export function Navbar() {
               <Link href="/products" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                 Shop All
               </Link>
-              <Link href="/products?category=t-shirts" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/products?category=T-Shirts" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                 T-Shirts
               </Link>
-              <Link href="/products?category=hoodies" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
-                Hoodies
-              </Link>
-              <Link href="/products?category=bottoms" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
-                Bottoms
+              <Link href="/products?category=Trousers" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                Trousers
               </Link>
               <div className="h-px bg-border/40 my-2" />
               {user ? (

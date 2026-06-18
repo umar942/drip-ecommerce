@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Product } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
+import { formatPrice } from "@/lib/currency";
 
 interface ProductCardProps {
   product: Product;
@@ -49,9 +50,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             {product.title}
           </Link>
           <div className="flex flex-col items-end shrink-0">
-            <span className="font-semibold text-foreground">${product.price.toFixed(2)}</span>
+            <span className="font-semibold text-foreground">{formatPrice(product.price)}</span>
             {product.compareAtPrice && (
-              <span className="text-xs text-muted-foreground line-through">${product.compareAtPrice.toFixed(2)}</span>
+              <span className="text-xs text-muted-foreground line-through">{formatPrice(product.compareAtPrice)}</span>
             )}
           </div>
         </div>

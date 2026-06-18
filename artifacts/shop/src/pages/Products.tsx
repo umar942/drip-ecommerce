@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Search, Filter } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { formatPrice } from "@/lib/currency";
 
 export default function Products() {
   const [searchParams] = useState(() => new URLSearchParams(window.location.search));
@@ -15,7 +16,7 @@ export default function Products() {
   
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>(categoryParam || "all");
-  const [priceRange, setPriceRange] = useState([0, 500]);
+  const [priceRange, setPriceRange] = useState([0, 5000]);
   const [showFilters, setShowFilters] = useState(false);
 
   const { data: productsData, isLoading } = useListProducts({
@@ -62,13 +63,17 @@ export default function Products() {
           <div>
             <h3 className="font-display font-bold uppercase tracking-widest text-sm mb-4 border-b border-border/40 pb-2">Category</h3>
             <div className="space-y-2">
-              {['all', 't-shirts', 'hoodies', 'bottoms', 'accessories'].map((cat) => (
-                <div key={cat} className="flex items-center">
+              {[
+                { label: "All", value: "all" },
+                { label: "T-Shirts", value: "T-Shirts" },
+                { label: "Trousers", value: "Trousers" },
+              ].map((cat) => (
+                <div key={cat.value} className="flex items-center">
                   <button
-                    onClick={() => setCategory(cat)}
-                    className={`text-sm uppercase tracking-wider transition-colors ${category === cat ? 'text-primary font-bold' : 'text-muted-foreground hover:text-foreground'}`}
+                    onClick={() => setCategory(cat.value)}
+                    className={`text-sm uppercase tracking-wider transition-colors ${category === cat.value ? 'text-primary font-bold' : 'text-muted-foreground hover:text-foreground'}`}
                   >
-                    {cat.replace('-', ' ')}
+                    {cat.label}
                   </button>
                 </div>
               ))}
@@ -79,16 +84,16 @@ export default function Products() {
             <h3 className="font-display font-bold uppercase tracking-widest text-sm mb-4 border-b border-border/40 pb-2">Price Range</h3>
             <div className="px-2">
               <Slider
-                defaultValue={[0, 500]}
-                max={1000}
-                step={10}
+                defaultValue={[0, 5000]}
+                max={5000}
+                step={100}
                 value={priceRange}
                 onValueChange={setPriceRange}
                 className="mb-4"
               />
               <div className="flex justify-between text-sm text-muted-foreground">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <span>{formatPrice(priceRange[0])}</span>
+                <span>{formatPrice(priceRange[1])}</span>
               </div>
             </div>
           </div>
@@ -119,7 +124,7 @@ export default function Products() {
               <Button 
                 variant="outline" 
                 className="mt-6 rounded-none uppercase tracking-wider"
-                onClick={() => { setSearch(""); setCategory("all"); setPriceRange([0, 500]); }}
+                onClick={() => { setSearch(""); setCategory("all"); setPriceRange([0, 5000]); }}
               >
                 Clear Filters
               </Button>

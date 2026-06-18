@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatPrice } from "@/lib/currency";
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
@@ -152,7 +153,7 @@ export default function Checkout() {
                   <div className="flex-1 flex flex-col justify-center">
                     <span className="text-sm font-bold line-clamp-1">{item.product.title}</span>
                     <span className="text-xs text-muted-foreground">Qty: {item.quantity}</span>
-                    <span className="text-sm font-bold mt-1">${(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span className="text-sm font-bold mt-1">{formatPrice(item.product.price * item.quantity)}</span>
                   </div>
                 </div>
               ))}
@@ -161,7 +162,7 @@ export default function Checkout() {
             <div className="flex flex-col gap-3 text-sm border-t border-border/40 pt-4">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${cart.total.toFixed(2)}</span>
+                <span>{formatPrice(cart.total)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
@@ -171,7 +172,7 @@ export default function Checkout() {
             
             <div className="flex justify-between items-center border-t border-border/40 pt-4 mt-2">
               <span className="font-bold uppercase tracking-wider">Total</span>
-              <span className="font-bold text-xl">${cart.total.toFixed(2)}</span>
+              <span className="font-bold text-xl">{formatPrice(cart.total)}</span>
             </div>
             
             <Button 
