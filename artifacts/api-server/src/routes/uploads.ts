@@ -1,29 +1,13 @@
 import { Router } from "express";
 import multer from "multer";
-import path from "path";
-import { randomBytes } from "crypto";
 import { requireAdmin } from "../lib/auth";
-import {
-  ALLOWED_IMAGE_TYPES,
-  getProductUploadDir,
-  MAX_IMAGE_BYTES,
-} from "../lib/uploads";
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "../lib/uploads";
+import { uploadProductImage } from "../lib/cloudinary";
 
 const router = Router();
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, getProductUploadDir());
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || ".jpg";
-    const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(ext) ? ext : ".jpg";
-    cb(null, `${Date.now()}-${randomBytes(6).toString("hex")}${safeExt}`);
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: MAX_IMAGE_BYTES },
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED_IMAGE_TYPES.has(file.mimetype)) {
@@ -54,14 +38,19 @@ router.post(
       next();
     });
   },
-  (req, res): void => {
+  async (req, res): Promise<void> => {
     if (!req.file) {
       res.status(400).json({ error: "No image file provided" });
       return;
     }
-    res.status(201).json({
-      url: `/uploads/products/${req.file.filename}`,
-    });
+    try {
+      const url = await uploadProductImage(req.file.buffer);
+      res.status(201).json({ url });
+    } catch (err) {
+      res.status(502).json({
+        error: err instanceof Error ? err.message : "Image upload failed",
+      });
+    }
   },
 );
 
