@@ -1,6 +1,7 @@
 import "@workspace/db/load-env";
 import type { IncomingMessage, ServerResponse } from "http";
-import app from "../src/app";
+// @ts-expect-error — built by esbuild (build.mjs) before Vercel packages this function
+import app from "../dist/app.mjs";
 import { connectDb } from "@workspace/db";
 
 let dbReady: Promise<unknown> | null = null;
