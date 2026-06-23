@@ -136,13 +136,6 @@ async function buildAll() {
     outdir: distDir,
     sourcemap: false,
   });
-
-  // On Vercel, delete the TypeScript source after bundling so its automatic
-  // function type-checking step has no .ts files left to discover/compile —
-  // only the pre-built dist/*.mjs bundles above are used at runtime.
-  if (process.env.VERCEL) {
-    await rm(path.resolve(artifactDir, "src"), { recursive: true, force: true });
-  }
 }
 
 buildAll().catch((err) => {
