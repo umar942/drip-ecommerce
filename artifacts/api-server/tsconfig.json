@@ -25,8 +25,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "tsBuildInfoFile": ".tsbuildinfo",
-    "outDir": "dist",
-    "rootDir": "src"
+    "outDir": "dist"
   },
   "include": ["src"]
 }
