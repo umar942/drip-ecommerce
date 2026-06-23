@@ -125,16 +125,24 @@ async function buildAll() {
     sourcemap: "linked",
   });
 
-  // Express app bundle (used by the Vercel serverless function). Sourcemaps
-  // are omitted here so Vercel's function bundler doesn't trace dependencies
-  // back to the original .ts sources and type-check them with the wrong
-  // tsconfig (which fails on pino-http's CJS export shape).
+  // Self-contained serverless handler bundle (used by the Vercel function).
+  // Bundles connectDb/load-env + the Express app together so nothing at
+  // runtime needs to resolve raw .ts source from workspace packages.
+  // Sourcemaps are omitted so Vercel's function bundler doesn't trace
+  // dependencies back to original .ts sources.
   await esbuild({
     ...sharedOptions,
-    entryPoints: [path.resolve(artifactDir, "src/app.ts")],
+    entryPoints: [path.resolve(artifactDir, "src/serverless.ts")],
     outdir: distDir,
     sourcemap: false,
   });
+
+  // On Vercel, delete the TypeScript source after bundling so its automatic
+  // function type-checking step has no .ts files left to discover/compile —
+  // only the pre-built dist/*.mjs bundles above are used at runtime.
+  if (process.env.VERCEL) {
+    await rm(path.resolve(artifactDir, "src"), { recursive: true, force: true });
+  }
 }
 
 buildAll().catch((err) => {
