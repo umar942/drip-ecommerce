@@ -3,7 +3,9 @@ import {
   useListProducts,
   useListCategories,
   useCreateProduct,
+  useUpdateProduct,
   getListProductsQueryKey,
+  type Product,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +44,15 @@ const emptyForm = {
   featured: false,
 };
 
+type FormState = typeof emptyForm;
+
+type ImageItem = {
+  id: string;
+  file: File | null;
+  url: string | null;
+  preview: string;
+};
+
 function parseList(value: string): string[] {
   return value
     .split(",")
@@ -49,26 +60,44 @@ function parseList(value: string): string[] {
     .filter(Boolean);
 }
 
+function productToForm(product: Product): FormState {
+  return {
+    title: product.title,
+    description: product.description ?? "",
+    price: String(product.price),
+    compareAtPrice: product.compareAtPrice != null ? String(product.compareAtPrice) : "",
+    categoryId: product.categoryId != null ? String(product.categoryId) : "",
+    stock: String(product.stock),
+    sizes: product.sizes.join(", "),
+    colors: product.colors.join(", "),
+    featured: Boolean(product.featured),
+  };
+}
+
 export default function AdminProducts() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState(emptyForm);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [uploading, setUploading] = useState(false);
 
   const { data: productsData, isLoading } = useListProducts();
   const { data: categories } = useListCategories();
   const createProduct = useCreateProduct();
+  const updateProduct = useUpdateProduct();
 
   const products = productsData?.products || [];
+  const isEditing = editingProduct !== null;
 
   const resetForm = () => {
     setForm(emptyForm);
-    if (imagePreview) URL.revokeObjectURL(imagePreview);
-    setImageFile(null);
-    setImagePreview(null);
+    images.forEach((img) => {
+      if (img.file) URL.revokeObjectURL(img.preview);
+    });
+    setImages([]);
+    setEditingProduct(null);
   };
 
   const handleOpenChange = (next: boolean) => {
@@ -76,29 +105,56 @@ export default function AdminProducts() {
     if (!next) resetForm();
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast({ title: "Please choose an image file", variant: "destructive" });
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: "Image must be 5MB or smaller", variant: "destructive" });
-      return;
-    }
-
-    if (imagePreview) URL.revokeObjectURL(imagePreview);
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-    e.target.value = "";
+  const openCreateDialog = () => {
+    resetForm();
+    setOpen(true);
   };
 
-  const clearImage = () => {
-    if (imagePreview) URL.revokeObjectURL(imagePreview);
-    setImageFile(null);
-    setImagePreview(null);
+  const openEditDialog = (product: Product) => {
+    setEditingProduct(product);
+    setForm(productToForm(product));
+    setImages(
+      product.images.map((url) => ({
+        id: url,
+        file: null,
+        url,
+        preview: url,
+      })),
+    );
+    setOpen(true);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (files.length === 0) return;
+
+    const accepted: ImageItem[] = [];
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) {
+        toast({ title: "Please choose image files only", variant: "destructive" });
+        continue;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: `${file.name} is larger than 5MB`, variant: "destructive" });
+        continue;
+      }
+      accepted.push({
+        id: `${file.name}-${file.lastModified}-${Math.random()}`,
+        file,
+        url: null,
+        preview: URL.createObjectURL(file),
+      });
+    }
+    if (accepted.length > 0) setImages((prev) => [...prev, ...accepted]);
+  };
+
+  const removeImage = (id: string) => {
+    setImages((prev) => {
+      const target = prev.find((img) => img.id === id);
+      if (target?.file) URL.revokeObjectURL(target.preview);
+      return prev.filter((img) => img.id !== id);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -117,17 +173,19 @@ export default function AdminProducts() {
       return;
     }
 
-    if (!imageFile) {
-      toast({ title: "Product image is required", variant: "destructive" });
+    if (images.length === 0) {
+      toast({ title: "At least one product image is required", variant: "destructive" });
       return;
     }
 
     const compareAt = form.compareAtPrice ? Number(form.compareAtPrice) : undefined;
 
     setUploading(true);
-    let imageUrl: string;
+    let imageUrls: string[];
     try {
-      imageUrl = await uploadProductImage(imageFile);
+      imageUrls = await Promise.all(
+        images.map((img) => (img.url ? Promise.resolve(img.url) : uploadProductImage(img.file!))),
+      );
     } catch (err) {
       toast({
         title: "Image upload failed",
@@ -137,43 +195,50 @@ export default function AdminProducts() {
       setUploading(false);
       return;
     }
+    setUploading(false);
 
-    createProduct.mutate(
-      {
-        data: {
-          title: form.title.trim(),
-          description: form.description.trim() || undefined,
-          price,
-          compareAtPrice: compareAt,
-          category: category.name,
-          categoryId: category.id,
-          stock,
-          sizes: parseList(form.sizes),
-          colors: parseList(form.colors),
-          images: [imageUrl],
-          featured: form.featured,
-        },
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-          toast({ title: "Product created", description: `"${form.title}" was added.` });
-          setUploading(false);
-          handleOpenChange(false);
-        },
-        onError: (err) => {
-          setUploading(false);
-          toast({
-            title: "Could not create product",
-            description: err instanceof Error ? err.message : "Try again",
-            variant: "destructive",
-          });
-        },
-      },
-    );
+    const payload = {
+      title: form.title.trim(),
+      description: form.description.trim() || undefined,
+      price,
+      compareAtPrice: compareAt,
+      category: category.name,
+      categoryId: category.id,
+      stock,
+      sizes: parseList(form.sizes),
+      colors: parseList(form.colors),
+      images: imageUrls,
+      featured: form.featured,
+    };
+
+    const onSuccess = (title: string) => {
+      queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
+      toast({ title, description: `"${form.title}" was saved.` });
+      handleOpenChange(false);
+    };
+
+    const onError = (err: unknown) => {
+      toast({
+        title: isEditing ? "Could not update product" : "Could not create product",
+        description: err instanceof Error ? err.message : "Try again",
+        variant: "destructive",
+      });
+    };
+
+    if (isEditing && editingProduct) {
+      updateProduct.mutate(
+        { id: editingProduct.id, data: payload },
+        { onSuccess: () => onSuccess("Product updated"), onError },
+      );
+    } else {
+      createProduct.mutate(
+        { data: payload },
+        { onSuccess: () => onSuccess("Product created"), onError },
+      );
+    }
   };
 
-  const isSaving = uploading || createProduct.isPending;
+  const isSaving = uploading || createProduct.isPending || updateProduct.isPending;
 
   if (isLoading) {
     return <div className="p-8 text-center text-muted-foreground uppercase tracking-widest text-sm">Loading Products...</div>;
@@ -185,7 +250,7 @@ export default function AdminProducts() {
         <h1 className="font-display text-3xl font-bold uppercase tracking-tight">Products</h1>
         <Button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={openCreateDialog}
           className="rounded-none uppercase tracking-widest text-xs font-bold gap-2"
         >
           <Plus className="h-4 w-4" /> Add Product
@@ -195,7 +260,9 @@ export default function AdminProducts() {
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="flex w-[calc(100%-2rem)] max-w-lg max-h-[min(90vh,720px)] flex-col gap-0 overflow-hidden rounded-none border-border/40 p-0 sm:max-w-lg">
           <DialogHeader className="shrink-0 px-6 pt-6 pb-4">
-            <DialogTitle className="font-display uppercase tracking-tight">Add New Product</DialogTitle>
+            <DialogTitle className="font-display uppercase tracking-tight">
+              {isEditing ? "Edit Product" : "Add New Product"}
+            </DialogTitle>
           </DialogHeader>
 
           <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-6 scrollbar-none">
@@ -286,46 +353,47 @@ export default function AdminProducts() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image">Product Image</Label>
-              {imagePreview ? (
-                <div className="relative border border-border/40 bg-secondary/10 p-2">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full max-h-48 object-contain bg-secondary/20"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={clearImage}
-                    className="absolute top-3 right-3 h-8 w-8 bg-background/80"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+              <Label htmlFor="image">Product Images</Label>
+              {images.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {images.map((img) => (
+                    <div key={img.id} className="relative border border-border/40 bg-secondary/10 p-1">
+                      <img
+                        src={img.preview}
+                        alt="Preview"
+                        className="w-full h-24 object-contain bg-secondary/20"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeImage(img.id)}
+                        className="absolute top-1 right-1 h-6 w-6 bg-background/80"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                <label
-                  htmlFor="image"
-                  className="flex flex-col items-center justify-center gap-2 border border-dashed border-border/40 bg-secondary/5 px-4 py-8 cursor-pointer hover:bg-secondary/10 transition-colors"
-                >
-                  <Upload className="h-8 w-8 text-muted-foreground" />
-                  <span className="text-sm font-medium">Click to upload image</span>
-                  <span className="text-xs text-muted-foreground">JPEG, PNG, WebP, GIF — max 5MB</span>
-                </label>
               )}
+              <label
+                htmlFor="image"
+                className="flex flex-col items-center justify-center gap-2 border border-dashed border-border/40 bg-secondary/5 px-4 py-8 cursor-pointer hover:bg-secondary/10 transition-colors"
+              >
+                <Upload className="h-8 w-8 text-muted-foreground" />
+                <span className="text-sm font-medium">
+                  {images.length > 0 ? "Add more images" : "Click to upload images"}
+                </span>
+                <span className="text-xs text-muted-foreground">JPEG, PNG, WebP, GIF — max 5MB each</span>
+              </label>
               <Input
                 id="image"
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
+                multiple
                 onChange={handleImageChange}
                 className="sr-only"
               />
-              {imagePreview && (
-                <label htmlFor="image" className="text-xs text-primary cursor-pointer hover:underline">
-                  Replace image
-                </label>
-              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
@@ -381,7 +449,7 @@ export default function AdminProducts() {
               disabled={isSaving}
               className="rounded-none uppercase tracking-widest text-xs font-bold"
             >
-              {isSaving ? "Saving..." : "Create Product"}
+              {isSaving ? "Saving..." : isEditing ? "Save Changes" : "Create Product"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -422,7 +490,12 @@ export default function AdminProducts() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Button variant="ghost" size="sm" className="text-xs uppercase tracking-wider">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openEditDialog(product)}
+                        className="text-xs uppercase tracking-wider"
+                      >
                         Edit
                       </Button>
                     </td>
