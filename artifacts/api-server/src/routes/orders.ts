@@ -8,9 +8,9 @@ import {
   type Order,
   type Product,
 } from "@workspace/db";
-import { requireAuth, requireAdmin, type AuthRequest } from "../lib/auth";
+import { requireAuth, requireAdmin, optionalAuth, type AuthRequest, type OptionalAuthRequest } from "../lib/auth";
 import { CreateOrderBody, UpdateOrderStatusBody } from "@workspace/api-zod";
-import { isPakistanCountry } from "../lib/pakistan";
+import { isPakistanCountry, validatePakistanAddress } from "../lib/pakistan";
 
 const router = Router();
 
@@ -49,8 +49,36 @@ async function buildOrder(order: Order) {
     };
   }));
 
-  const user = await usersRepo.findUserById(order.userId);
+  const user = order.userId != null ? await usersRepo.findUserById(order.userId) : null;
   const address = order.addressId ? await addressesRepo.findAddressById(order.addressId) : null;
+
+  const addressOut = address
+    ? {
+        id: address.id,
+        userId: address.userId,
+        label: address.label,
+        line1: address.line1,
+        line2: address.line2,
+        city: address.city,
+        state: address.state,
+        country: address.country,
+        zip: address.zip,
+        isDefault: address.isDefault,
+      }
+    : order.guestAddress
+      ? {
+          id: null,
+          userId: null,
+          label: null,
+          line1: order.guestAddress.line1,
+          line2: order.guestAddress.line2,
+          city: order.guestAddress.city,
+          state: order.guestAddress.state,
+          country: order.guestAddress.country,
+          zip: order.guestAddress.zip,
+          isDefault: false,
+        }
+      : null;
 
   return {
     id: order.id,
@@ -59,18 +87,10 @@ async function buildOrder(order: Order) {
     totalPrice: order.totalPrice,
     status: order.status,
     paymentStatus: order.paymentStatus,
-    address: address ? {
-      id: address.id,
-      userId: address.userId,
-      label: address.label,
-      line1: address.line1,
-      line2: address.line2,
-      city: address.city,
-      state: address.state,
-      country: address.country,
-      zip: address.zip,
-      isDefault: address.isDefault,
-    } : null,
+    address: addressOut,
+    guestName: order.guestName,
+    guestEmail: order.guestEmail,
+    guestPhone: order.guestPhone,
     user: user ? { id: user.id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt } : null,
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,
@@ -85,50 +105,10 @@ router.get("/orders", requireAuth, async (req, res): Promise<void> => {
   res.json(built);
 });
 
-router.post("/orders", requireAuth, async (req, res): Promise<void> => {
-  const userId = (req as AuthRequest).user.id;
+router.post("/orders", optionalAuth, async (req, res): Promise<void> => {
+  const user = (req as OptionalAuthRequest).user;
   const parsed = CreateOrderBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-
-  const cartItems = await cartRepo.listCartItems(userId);
-  if (cartItems.length === 0) { res.status(400).json({ error: "Cart is empty" }); return; }
-
-  if (!parsed.data.addressId) {
-    res.status(400).json({ error: "A Pakistan delivery address is required" });
-    return;
-  }
-  const address = await addressesRepo.findAddressById(parsed.data.addressId);
-  if (!address || address.userId !== userId) {
-    res.status(400).json({ error: "Invalid delivery address" });
-    return;
-  }
-  if (!isPakistanCountry(address.country)) {
-    res.status(400).json({ error: "This store only ships within Pakistan" });
-    return;
-  }
-
-  let total = 0;
-  const orderItemData: Array<{
-    productId: number;
-    quantity: number;
-    price: number;
-    size: string | null;
-    color: string | null;
-  }> = [];
-
-  for (const item of cartItems) {
-    const product = await productsRepo.findProductById(item.productId);
-    if (!product) continue;
-    const price = product.price;
-    total += price * item.quantity;
-    orderItemData.push({
-      productId: item.productId,
-      quantity: item.quantity,
-      price,
-      size: item.size,
-      color: item.color,
-    });
-  }
 
   const method = parsed.data.paymentMethod ?? "cod";
   const availableMethods = new Set(["cod"]);
@@ -137,27 +117,147 @@ router.post("/orders", requireAuth, async (req, res): Promise<void> => {
     return;
   }
 
+  let orderItemData: Array<{
+    productId: number;
+    quantity: number;
+    price: number;
+    size: string | null;
+    color: string | null;
+  }> = [];
+  let total = 0;
+
+  if (user) {
+    const cartItems = await cartRepo.listCartItems(user.id);
+    if (cartItems.length === 0) { res.status(400).json({ error: "Cart is empty" }); return; }
+
+    if (!parsed.data.addressId) {
+      res.status(400).json({ error: "A Pakistan delivery address is required" });
+      return;
+    }
+    const address = await addressesRepo.findAddressById(parsed.data.addressId);
+    if (!address || address.userId !== user.id) {
+      res.status(400).json({ error: "Invalid delivery address" });
+      return;
+    }
+    if (!isPakistanCountry(address.country)) {
+      res.status(400).json({ error: "This store only ships within Pakistan" });
+      return;
+    }
+
+    for (const item of cartItems) {
+      const product = await productsRepo.findProductById(item.productId);
+      if (!product) continue;
+      total += product.price * item.quantity;
+      orderItemData.push({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: product.price,
+        size: item.size,
+        color: item.color,
+      });
+    }
+
+    const order = await ordersRepo.createOrder(
+      {
+        userId: user.id,
+        totalPrice: Math.round(total * 100) / 100,
+        addressId: parsed.data.addressId,
+        paymentMethod: method,
+        paymentStatus: method === "cod" ? "pending" : "paid",
+        status: "pending",
+        guestName: null,
+        guestEmail: null,
+        guestPhone: null,
+        guestAddress: null,
+      },
+      orderItemData,
+    );
+    await cartRepo.clearCart(user.id);
+
+    res.status(201).json(await buildOrder(order));
+    return;
+  }
+
+  // Guest checkout: cart lives client-side, so items are sent in the request.
+  const { guestName, guestEmail, guestPhone, guestAddress, items } = parsed.data;
+  if (!guestName?.trim() || !guestEmail?.trim() || !guestPhone?.trim()) {
+    res.status(400).json({ error: "Name, email, and phone are required" });
+    return;
+  }
+  if (!guestAddress) {
+    res.status(400).json({ error: "A Pakistan delivery address is required" });
+    return;
+  }
+  const addressError = validatePakistanAddress(guestAddress);
+  if (addressError) { res.status(400).json({ error: addressError }); return; }
+  if (!items || items.length === 0) {
+    res.status(400).json({ error: "Cart is empty" });
+    return;
+  }
+
+  for (const item of items) {
+    const product = await productsRepo.findProductById(item.productId);
+    if (!product) continue;
+    total += product.price * item.quantity;
+    orderItemData.push({
+      productId: item.productId,
+      quantity: item.quantity,
+      price: product.price,
+      size: item.size ?? null,
+      color: item.color ?? null,
+    });
+  }
+  if (orderItemData.length === 0) {
+    res.status(400).json({ error: "Cart is empty" });
+    return;
+  }
+
   const order = await ordersRepo.createOrder(
     {
-      userId,
+      userId: null,
       totalPrice: Math.round(total * 100) / 100,
-      addressId: parsed.data.addressId ?? null,
+      addressId: null,
       paymentMethod: method,
       paymentStatus: method === "cod" ? "pending" : "paid",
       status: "pending",
+      guestName: guestName.trim(),
+      guestEmail: guestEmail.trim(),
+      guestPhone: guestPhone.trim(),
+      guestAddress: {
+        line1: guestAddress.line1,
+        line2: guestAddress.line2 ?? null,
+        city: guestAddress.city,
+        state: guestAddress.state,
+        country: guestAddress.country,
+        zip: guestAddress.zip,
+      },
     },
     orderItemData,
   );
-  await cartRepo.clearCart(userId);
 
   res.status(201).json(await buildOrder(order));
 });
 
-router.get("/orders/:id", requireAuth, async (req, res): Promise<void> => {
+router.get("/orders/:id", optionalAuth, async (req, res): Promise<void> => {
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const id = parseInt(raw, 10);
   const order = await ordersRepo.findOrderById(id);
   if (!order) { res.status(404).json({ error: "Not found" }); return; }
+
+  const user = (req as OptionalAuthRequest).user;
+
+  if (order.userId != null) {
+    const isOwner = !!user && user.id === order.userId;
+    const isAdmin = !!user && (user.role === "admin" || user.role === "staff");
+    if (!isOwner && !isAdmin) { res.status(401).json({ error: "Unauthorized" }); return; }
+  } else {
+    const email = typeof req.query.email === "string" ? req.query.email.trim().toLowerCase() : "";
+    if (!email || email !== (order.guestEmail ?? "").toLowerCase()) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+  }
+
   res.json(await buildOrder(order));
 });
 

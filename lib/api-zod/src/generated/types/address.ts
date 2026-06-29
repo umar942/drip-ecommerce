@@ -7,8 +7,10 @@
  */
 
 export interface Address {
-  id: number;
-  userId: number;
+  /** @nullable */
+  id: number | null;
+  /** @nullable */
+  userId: number | null;
   /** @nullable */
   label?: string | null;
   line1: string;

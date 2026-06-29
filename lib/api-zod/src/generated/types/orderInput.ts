@@ -5,9 +5,16 @@
  * Clothing e-commerce API
  * OpenAPI spec version: 0.1.0
  */
+import type { CartItemInput } from './cartItemInput';
+import type { GuestAddressInput } from './guestAddressInput';
 
 export interface OrderInput {
-  addressId: number;
+  addressId?: number;
   paymentMethod: string;
   couponCode?: string;
+  guestName?: string;
+  guestEmail?: string;
+  guestPhone?: string;
+  guestAddress?: GuestAddressInput;
+  items?: CartItemInput[];
 }

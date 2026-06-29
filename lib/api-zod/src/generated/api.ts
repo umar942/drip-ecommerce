@@ -22,12 +22,16 @@ export const HealthCheckResponse = zod.object({
 
 export const registerBodyPasswordMin = 6;
 
+export const registerBodyCodeMin = 6;
+export const registerBodyCodeMax = 6;
+
 
 
 export const RegisterBody = zod.object({
   "name": zod.string().min(1),
   "email": zod.string().email(),
-  "password": zod.string().min(registerBodyPasswordMin)
+  "password": zod.string().min(registerBodyPasswordMin),
+  "code": zod.string().min(registerBodyCodeMin).max(registerBodyCodeMax)
 })
 
 
@@ -46,6 +50,7 @@ export const LoginResponse = zod.object({
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 })
 })
@@ -59,6 +64,7 @@ export const GetMeResponse = zod.object({
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 })
 
@@ -67,6 +73,52 @@ export const GetMeResponse = zod.object({
  * @summary Logout
  */
 export const LogoutResponse = zod.object({
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Send email verification OTP
+ */
+export const SendOtpBody = zod.object({
+  "email": zod.string().email(),
+  "purpose": zod.enum(['signup', 'reset'])
+})
+
+export const SendOtpResponse = zod.object({
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Request password reset OTP
+ */
+export const ForgotPasswordBody = zod.object({
+  "email": zod.string().email()
+})
+
+export const ForgotPasswordResponse = zod.object({
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Reset password with OTP
+ */
+export const resetPasswordBodyCodeMin = 6;
+export const resetPasswordBodyCodeMax = 6;
+
+export const resetPasswordBodyNewPasswordMin = 6;
+
+
+
+export const ResetPasswordBody = zod.object({
+  "email": zod.string().email(),
+  "code": zod.string().min(resetPasswordBodyCodeMin).max(resetPasswordBodyCodeMax),
+  "newPassword": zod.string().min(resetPasswordBodyNewPasswordMin)
+})
+
+export const ResetPasswordResponse = zod.object({
   "message": zod.string()
 })
 
@@ -466,7 +518,7 @@ export const RemoveFromWishlistParams = zod.object({
  */
 export const ListOrdersResponseItem = zod.object({
   "id": zod.number(),
-  "userId": zod.number(),
+  "userId": zod.number().nullable(),
   "items": zod.array(zod.object({
   "id": zod.number(),
   "productId": zod.number(),
@@ -496,8 +548,8 @@ export const ListOrdersResponseItem = zod.object({
   "status": zod.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
   "paymentStatus": zod.enum(['pending', 'paid', 'failed', 'refunded']),
   "address": zod.object({
-  "id": zod.number(),
-  "userId": zod.number(),
+  "id": zod.number().nullable(),
+  "userId": zod.number().nullable(),
   "label": zod.string().nullish(),
   "line1": zod.string(),
   "line2": zod.string().nullish(),
@@ -507,11 +559,15 @@ export const ListOrdersResponseItem = zod.object({
   "zip": zod.string(),
   "isDefault": zod.boolean().optional()
 }).optional(),
+  "guestName": zod.string().nullish(),
+  "guestEmail": zod.string().nullish(),
+  "guestPhone": zod.string().nullish(),
   "user": zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 }).optional(),
   "createdAt": zod.coerce.date(),
@@ -524,9 +580,26 @@ export const ListOrdersResponse = zod.array(ListOrdersResponseItem)
  * @summary Create order (checkout)
  */
 export const CreateOrderBody = zod.object({
-  "addressId": zod.number(),
+  "addressId": zod.number().optional(),
   "paymentMethod": zod.string(),
-  "couponCode": zod.string().optional()
+  "couponCode": zod.string().optional(),
+  "guestName": zod.string().optional(),
+  "guestEmail": zod.string().optional(),
+  "guestPhone": zod.string().optional(),
+  "guestAddress": zod.object({
+  "line1": zod.string(),
+  "line2": zod.string().optional(),
+  "city": zod.string(),
+  "state": zod.string(),
+  "country": zod.string(),
+  "zip": zod.string()
+}).optional(),
+  "items": zod.array(zod.object({
+  "productId": zod.number(),
+  "quantity": zod.number(),
+  "size": zod.string().optional(),
+  "color": zod.string().optional()
+})).optional()
 })
 
 
@@ -537,9 +610,13 @@ export const GetOrderParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const GetOrderQueryParams = zod.object({
+  "email": zod.coerce.string().optional().describe('Required to look up a guest order without logging in; must match the email used at checkout.')
+})
+
 export const GetOrderResponse = zod.object({
   "id": zod.number(),
-  "userId": zod.number(),
+  "userId": zod.number().nullable(),
   "items": zod.array(zod.object({
   "id": zod.number(),
   "productId": zod.number(),
@@ -569,8 +646,8 @@ export const GetOrderResponse = zod.object({
   "status": zod.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
   "paymentStatus": zod.enum(['pending', 'paid', 'failed', 'refunded']),
   "address": zod.object({
-  "id": zod.number(),
-  "userId": zod.number(),
+  "id": zod.number().nullable(),
+  "userId": zod.number().nullable(),
   "label": zod.string().nullish(),
   "line1": zod.string(),
   "line2": zod.string().nullish(),
@@ -580,11 +657,15 @@ export const GetOrderResponse = zod.object({
   "zip": zod.string(),
   "isDefault": zod.boolean().optional()
 }).optional(),
+  "guestName": zod.string().nullish(),
+  "guestEmail": zod.string().nullish(),
+  "guestPhone": zod.string().nullish(),
   "user": zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 }).optional(),
   "createdAt": zod.coerce.date(),
@@ -606,7 +687,7 @@ export const UpdateOrderStatusBody = zod.object({
 
 export const UpdateOrderStatusResponse = zod.object({
   "id": zod.number(),
-  "userId": zod.number(),
+  "userId": zod.number().nullable(),
   "items": zod.array(zod.object({
   "id": zod.number(),
   "productId": zod.number(),
@@ -636,8 +717,8 @@ export const UpdateOrderStatusResponse = zod.object({
   "status": zod.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
   "paymentStatus": zod.enum(['pending', 'paid', 'failed', 'refunded']),
   "address": zod.object({
-  "id": zod.number(),
-  "userId": zod.number(),
+  "id": zod.number().nullable(),
+  "userId": zod.number().nullable(),
   "label": zod.string().nullish(),
   "line1": zod.string(),
   "line2": zod.string().nullish(),
@@ -647,11 +728,15 @@ export const UpdateOrderStatusResponse = zod.object({
   "zip": zod.string(),
   "isDefault": zod.boolean().optional()
 }).optional(),
+  "guestName": zod.string().nullish(),
+  "guestEmail": zod.string().nullish(),
+  "guestPhone": zod.string().nullish(),
   "user": zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 }).optional(),
   "createdAt": zod.coerce.date(),
@@ -684,7 +769,7 @@ export const GetAdminStatsResponse = zod.object({
  */
 export const GetRecentOrdersResponseItem = zod.object({
   "id": zod.number(),
-  "userId": zod.number(),
+  "userId": zod.number().nullable(),
   "items": zod.array(zod.object({
   "id": zod.number(),
   "productId": zod.number(),
@@ -714,8 +799,8 @@ export const GetRecentOrdersResponseItem = zod.object({
   "status": zod.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
   "paymentStatus": zod.enum(['pending', 'paid', 'failed', 'refunded']),
   "address": zod.object({
-  "id": zod.number(),
-  "userId": zod.number(),
+  "id": zod.number().nullable(),
+  "userId": zod.number().nullable(),
   "label": zod.string().nullish(),
   "line1": zod.string(),
   "line2": zod.string().nullish(),
@@ -725,11 +810,15 @@ export const GetRecentOrdersResponseItem = zod.object({
   "zip": zod.string(),
   "isDefault": zod.boolean().optional()
 }).optional(),
+  "guestName": zod.string().nullish(),
+  "guestEmail": zod.string().nullish(),
+  "guestPhone": zod.string().nullish(),
   "user": zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 }).optional(),
   "createdAt": zod.coerce.date(),
@@ -746,6 +835,7 @@ export const ListUsersResponseItem = zod.object({
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 })
 export const ListUsersResponse = zod.array(ListUsersResponseItem)
@@ -763,6 +853,7 @@ export const GetUserResponse = zod.object({
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 })
 
@@ -785,6 +876,7 @@ export const UpdateUserResponse = zod.object({
   "name": zod.string(),
   "email": zod.string(),
   "role": zod.enum(['user', 'admin', 'staff']),
+  "emailVerified": zod.boolean().optional(),
   "createdAt": zod.coerce.date()
 })
 
@@ -805,8 +897,8 @@ export const GetUserAddressesParams = zod.object({
 })
 
 export const GetUserAddressesResponseItem = zod.object({
-  "id": zod.number(),
-  "userId": zod.number(),
+  "id": zod.number().nullable(),
+  "userId": zod.number().nullable(),
   "label": zod.string().nullish(),
   "line1": zod.string(),
   "line2": zod.string().nullish(),

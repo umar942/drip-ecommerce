@@ -19,6 +19,39 @@ export interface RegisterInput {
   email: string;
   /** @minLength 6 */
   password: string;
+  /**
+     * @minLength 6
+     * @maxLength 6
+     */
+  code: string;
+}
+
+export type SendOtpInputPurpose = typeof SendOtpInputPurpose[keyof typeof SendOtpInputPurpose];
+
+
+export const SendOtpInputPurpose = {
+  signup: 'signup',
+  reset: 'reset',
+} as const;
+
+export interface SendOtpInput {
+  email: string;
+  purpose: SendOtpInputPurpose;
+}
+
+export interface ForgotPasswordInput {
+  email: string;
+}
+
+export interface ResetPasswordInput {
+  email: string;
+  /**
+     * @minLength 6
+     * @maxLength 6
+     */
+  code: string;
+  /** @minLength 6 */
+  newPassword: string;
 }
 
 export interface LoginInput {
@@ -40,6 +73,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  emailVerified?: boolean;
   createdAt: string;
 }
 
@@ -214,8 +248,10 @@ export const OrderPaymentStatus = {
 } as const;
 
 export interface Address {
-  id: number;
-  userId: number;
+  /** @nullable */
+  id: number | null;
+  /** @nullable */
+  userId: number | null;
   /** @nullable */
   label?: string | null;
   line1: string;
@@ -230,21 +266,42 @@ export interface Address {
 
 export interface Order {
   id: number;
-  userId: number;
+  /** @nullable */
+  userId: number | null;
   items: OrderItem[];
   totalPrice: number;
   status: OrderStatus;
   paymentStatus: OrderPaymentStatus;
   address?: Address;
+  /** @nullable */
+  guestName?: string | null;
+  /** @nullable */
+  guestEmail?: string | null;
+  /** @nullable */
+  guestPhone?: string | null;
   user?: User;
   createdAt: string;
   updatedAt?: string;
 }
 
+export interface GuestAddressInput {
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  country: string;
+  zip: string;
+}
+
 export interface OrderInput {
-  addressId: number;
+  addressId?: number;
   paymentMethod: string;
   couponCode?: string;
+  guestName?: string;
+  guestEmail?: string;
+  guestPhone?: string;
+  guestAddress?: GuestAddressInput;
+  items?: CartItemInput[];
 }
 
 export type OrderStatusUpdateStatus = typeof OrderStatusUpdateStatus[keyof typeof OrderStatusUpdateStatus];
@@ -313,5 +370,12 @@ size?: string;
 color?: string;
 page?: number;
 limit?: number;
+};
+
+export type GetOrderParams = {
+/**
+ * Required to look up a guest order without logging in; must match the email used at checkout.
+ */
+email?: string;
 };
 

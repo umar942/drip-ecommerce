@@ -13,12 +13,19 @@ import type { User } from './user';
 
 export interface Order {
   id: number;
-  userId: number;
+  /** @nullable */
+  userId: number | null;
   items: OrderItem[];
   totalPrice: number;
   status: OrderStatus;
   paymentStatus: OrderPaymentStatus;
   address?: Address;
+  /** @nullable */
+  guestName?: string | null;
+  /** @nullable */
+  guestEmail?: string | null;
+  /** @nullable */
+  guestPhone?: string | null;
   user?: User;
   createdAt: Date;
   updatedAt?: Date;

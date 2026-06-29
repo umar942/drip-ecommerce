@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
+import { useCart } from "@/lib/cart";
 import {
-  useGetCart,
   useCreateOrder,
   useAddUserAddress,
   getGetCartQueryKey,
@@ -73,13 +73,16 @@ export default function Checkout() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: cart } = useGetCart();
+  const cart = useCart();
   const createOrder = useCreateOrder();
   const addAddress = useAddUserAddress();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>("cod");
 
   const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
     line1: "",
     line2: "",
     city: "",
@@ -87,14 +90,24 @@ export default function Checkout() {
     zip: "",
   });
 
-  if (!cart || cart.items.length === 0) {
+  if (!cart.isLoading && cart.items.length === 0) {
     setLocation("/cart");
     return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+
+    if (!user) {
+      if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
+        toast({
+          title: "Contact details required",
+          description: "Please enter your name, email, and phone number.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
 
     if (!formData.state) {
       toast({ title: "Province required", description: "Please select your province.", variant: "destructive" });
@@ -111,33 +124,63 @@ export default function Checkout() {
 
     setIsSubmitting(true);
     try {
-      const address = await addAddress.mutateAsync({
-        id: user.id,
-        data: {
-          line1: formData.line1,
-          line2: formData.line2 || undefined,
-          city: formData.city,
-          state: formData.state,
-          country: STORE_COUNTRY,
-          zip: formData.zip.trim(),
-          isDefault: true,
-        },
-      });
+      let order;
+      if (user) {
+        const address = await addAddress.mutateAsync({
+          id: user.id,
+          data: {
+            line1: formData.line1,
+            line2: formData.line2 || undefined,
+            city: formData.city,
+            state: formData.state,
+            country: STORE_COUNTRY,
+            zip: formData.zip.trim(),
+            isDefault: true,
+          },
+        });
 
-      const order = await createOrder.mutateAsync({
-        data: {
-          addressId: address.id,
-          paymentMethod: "cod",
-        },
-      });
+        order = await createOrder.mutateAsync({
+          data: {
+            addressId: address.id!,
+            paymentMethod: "cod",
+          },
+        });
 
-      queryClient.invalidateQueries({ queryKey: getGetCartQueryKey() });
-      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getGetCartQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
+      } else {
+        order = await createOrder.mutateAsync({
+          data: {
+            paymentMethod: "cod",
+            guestName: formData.name.trim(),
+            guestEmail: formData.email.trim(),
+            guestPhone: formData.phone.trim(),
+            guestAddress: {
+              line1: formData.line1,
+              line2: formData.line2 || undefined,
+              city: formData.city,
+              state: formData.state,
+              country: STORE_COUNTRY,
+              zip: formData.zip.trim(),
+            },
+            items: cart.items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              size: item.size ?? undefined,
+              color: item.color ?? undefined,
+            })),
+          },
+        });
+        cart.clear();
+      }
+
       toast({
         title: "Order placed",
         description: "Your COD order will be delivered within Pakistan.",
       });
-      setLocation(`/orders/${order.id}`);
+      setLocation(
+        user ? `/orders/${order.id}` : `/orders/${order.id}?email=${encodeURIComponent(formData.email.trim())}`,
+      );
     } catch (err) {
       toast({
         title: "Checkout failed",
@@ -157,6 +200,52 @@ export default function Checkout() {
       <div className="flex flex-col lg:flex-row gap-12">
         <div className="flex-1">
           <form id="checkout-form" onSubmit={handleSubmit} className="flex flex-col gap-8">
+            {!user && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold uppercase tracking-tight border-b border-border/40 pb-2">
+                  Contact Info
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Checking out as a guest. We'll use this to confirm your order and let you track it later.
+                </p>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+                    required
+                    className="rounded-none bg-background border-border/40"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
+                      required
+                      className="rounded-none bg-background border-border/40"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="03XX-XXXXXXX"
+                      value={formData.phone}
+                      onChange={(e) => setFormData((p) => ({ ...p, phone: e.target.value }))}
+                      required
+                      className="rounded-none bg-background border-border/40"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-4">
               <h2 className="text-xl font-bold uppercase tracking-tight border-b border-border/40 pb-2">
                 Delivery Address (Pakistan)

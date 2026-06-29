@@ -37,6 +37,21 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   next();
 }
 
+export async function optionalAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    const payload = verifyToken(token);
+    if (payload) {
+      const user = await usersRepo.findUserById(payload.id);
+      if (user) {
+        (req as Request & { user: User }).user = user;
+      }
+    }
+  }
+  next();
+}
+
 export async function requireAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
   await requireAuth(req, res, async () => {
     const user = (req as Request & { user: User }).user;
@@ -49,3 +64,4 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
 }
 
 export type AuthRequest = Request & { user: User };
+export type OptionalAuthRequest = Request & { user?: User };

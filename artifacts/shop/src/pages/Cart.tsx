@@ -1,17 +1,14 @@
-import { useGetCart, useUpdateCartItem, useRemoveCartItem, getGetCartQueryKey } from "@workspace/api-client-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Trash2, ShoppingBag } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { formatPrice } from "@/lib/currency";
+import { useCart } from "@/lib/cart";
 
 export default function Cart() {
   const [, setLocation] = useLocation();
-  const queryClient = useQueryClient();
-  const { data: cart, isLoading } = useGetCart();
-  const updateItem = useUpdateCartItem();
-  const removeItem = useRemoveCartItem();
+  const cart = useCart();
+  const { items, total, itemCount, isLoading } = cart;
 
   if (isLoading) {
     return (
@@ -21,22 +18,15 @@ export default function Cart() {
     );
   }
 
-  const items = cart?.items || [];
   const isEmpty = items.length === 0;
 
-  const handleUpdateQuantity = (itemId: number, quantity: number) => {
+  const handleUpdateQuantity = (itemId: number | string, quantity: number) => {
     if (quantity < 1) return;
-    updateItem.mutate(
-      { id: itemId, data: { quantity } },
-      { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCartQueryKey() }) }
-    );
+    cart.updateItem(itemId, quantity);
   };
 
-  const handleRemoveItem = (itemId: number) => {
-    removeItem.mutate(
-      { id: itemId },
-      { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCartQueryKey() }) }
-    );
+  const handleRemoveItem = (itemId: number | string) => {
+    cart.removeItem(itemId);
   };
 
   return (
@@ -88,24 +78,21 @@ export default function Cart() {
                   
                   <div className="mt-auto flex justify-between items-end">
                     <div className="flex items-center border border-border/40 h-10 w-max">
-                      <button 
+                      <button
                         onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                         className="w-10 h-full flex items-center justify-center hover:bg-secondary/50 transition-colors"
-                        disabled={updateItem.isPending}
                       >-</button>
                       <div className="w-10 h-full flex items-center justify-center font-bold text-center border-x border-border/40 text-sm">
                         {item.quantity}
                       </div>
-                      <button 
+                      <button
                         onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                         className="w-10 h-full flex items-center justify-center hover:bg-secondary/50 transition-colors"
-                        disabled={updateItem.isPending}
                       >+</button>
                     </div>
-                    <button 
+                    <button
                       onClick={() => handleRemoveItem(item.id)}
                       className="text-muted-foreground hover:text-destructive transition-colors p-2"
-                      disabled={removeItem.isPending}
                     >
                       <Trash2 className="h-5 w-5" />
                     </button>
@@ -121,8 +108,8 @@ export default function Cart() {
               
               <div className="flex flex-col gap-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal ({cart?.itemCount ?? 0} items)</span>
-                  <span>{formatPrice(cart?.total ?? 0)}</span>
+                  <span className="text-muted-foreground">Subtotal ({itemCount} items)</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
@@ -133,10 +120,10 @@ export default function Cart() {
                   <span>Calculated at checkout</span>
                 </div>
               </div>
-              
+
               <div className="flex justify-between items-center border-t border-border/40 pt-4 mt-2">
                 <span className="font-bold uppercase tracking-wider">Estimated Total</span>
-                <span className="font-bold text-xl">{formatPrice(cart?.total ?? 0)}</span>
+                <span className="font-bold text-xl">{formatPrice(total)}</span>
               </div>
               
               <Button 

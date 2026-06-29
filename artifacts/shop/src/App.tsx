@@ -3,6 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./lib/auth";
+import { GuestCartProvider } from "./lib/guest-cart";
+import { LoginPromptProvider } from "./lib/login-prompt";
+import { LoginPromptDialog } from "./components/shared/LoginPromptDialog";
 import { AppLayout } from "./components/layout/AppLayout";
 import { AdminAppShell } from "./components/layout/AdminAppShell";
 import { AdminLayout } from "./components/layout/AdminLayout";
@@ -16,6 +19,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import OrderDetail from "./pages/OrderDetail";
+import TrackOrder from "./pages/TrackOrder";
 import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
@@ -76,18 +80,13 @@ function Router() {
               <Route path="/products" component={Products} />
               <Route path="/products/:id" component={ProductDetail} />
 
-              <Route path="/cart">
-                <ProtectedRoute><Cart /></ProtectedRoute>
-              </Route>
-              <Route path="/checkout">
-                <ProtectedRoute><Checkout /></ProtectedRoute>
-              </Route>
+              <Route path="/cart" component={Cart} />
+              <Route path="/checkout" component={Checkout} />
               <Route path="/orders">
                 <ProtectedRoute><Orders /></ProtectedRoute>
               </Route>
-              <Route path="/orders/:id">
-                <ProtectedRoute><OrderDetail /></ProtectedRoute>
-              </Route>
+              <Route path="/orders/:id" component={OrderDetail} />
+              <Route path="/track-order" component={TrackOrder} />
               <Route path="/wishlist">
                 <ProtectedRoute><Wishlist /></ProtectedRoute>
               </Route>
@@ -113,12 +112,17 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Router />
-          </WouterRouter>
-          <Toaster />
-        </TooltipProvider>
+        <GuestCartProvider>
+          <LoginPromptProvider>
+            <TooltipProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <Router />
+              </WouterRouter>
+              <LoginPromptDialog />
+              <Toaster />
+            </TooltipProvider>
+          </LoginPromptProvider>
+        </GuestCartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

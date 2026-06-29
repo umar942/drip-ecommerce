@@ -33,7 +33,7 @@ router.get("/admin/recent-orders", requireAdmin, async (_req, res): Promise<void
 
   const withDetails = await Promise.all(orders.map(async (order) => {
     const items = await ordersRepo.listOrderItems(order.id);
-    const user = await usersRepo.findUserById(order.userId);
+    const user = order.userId != null ? await usersRepo.findUserById(order.userId) : null;
     return {
       id: order.id,
       userId: order.userId,
@@ -50,6 +50,9 @@ router.get("/admin/recent-orders", requireAdmin, async (_req, res): Promise<void
       status: order.status,
       paymentStatus: order.paymentStatus,
       address: null,
+      guestName: order.guestName,
+      guestEmail: order.guestEmail,
+      guestPhone: order.guestPhone,
       user: user ? { id: user.id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt } : null,
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,

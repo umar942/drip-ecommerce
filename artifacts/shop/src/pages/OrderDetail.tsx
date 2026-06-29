@@ -1,20 +1,33 @@
 import { useGetOrder, getGetOrderQueryKey } from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
+import { useState } from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { formatPrice } from "@/lib/currency";
 import { formatPakistanAddress } from "@/lib/pakistan";
+import { useAuth } from "@/lib/auth";
 
 export default function OrderDetail() {
   const { id } = useParams();
-  
-  const { data: order, isLoading } = useGetOrder(Number(id), {
-    query: {
-      queryKey: getGetOrderQueryKey(Number(id)),
-      enabled: !!id,
+  const { user } = useAuth();
+  const initialEmail = new URLSearchParams(window.location.search).get("email") ?? "";
+  const [emailInput, setEmailInput] = useState(initialEmail);
+  const [submittedEmail, setSubmittedEmail] = useState(initialEmail);
+
+  const { data: order, isLoading, isError } = useGetOrder(
+    Number(id),
+    submittedEmail ? { email: submittedEmail } : undefined,
+    {
+      query: {
+        queryKey: getGetOrderQueryKey(Number(id)),
+        enabled: !!id && (!!user || !!submittedEmail),
+        retry: false,
+      },
     },
-  });
+  );
 
   if (isLoading) {
     return (
@@ -24,11 +37,46 @@ export default function OrderDetail() {
     );
   }
 
+  if (!order && !user) {
+    return (
+      <div className="container mx-auto px-4 py-20 max-w-sm text-center">
+        <h1 className="font-display text-2xl font-bold uppercase mb-2">Track Your Order</h1>
+        <p className="text-sm text-muted-foreground mb-6">
+          {isError && submittedEmail
+            ? "We couldn't find that order with this email."
+            : "Enter the email you used at checkout to view this order."}
+        </p>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSubmittedEmail(emailInput.trim());
+          }}
+          className="flex flex-col gap-4 text-left"
+        >
+          <div className="space-y-2">
+            <Label htmlFor="track-email">Email</Label>
+            <Input
+              id="track-email"
+              type="email"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              required
+              className="rounded-none border-border/40"
+            />
+          </div>
+          <Button type="submit" className="rounded-none uppercase tracking-widest text-xs font-bold">
+            View Order
+          </Button>
+        </form>
+      </div>
+    );
+  }
+
   if (!order) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <h1 className="font-display text-3xl font-bold uppercase mb-4">Order Not Found</h1>
-        <Link href="/orders"><Button variant="outline" className="rounded-none">Back to Orders</Button></Link>
+        <Link href={user ? "/orders" : "/"}><Button variant="outline" className="rounded-none">{user ? "Back to Orders" : "Back to Shop"}</Button></Link>
       </div>
     );
   }
@@ -36,8 +84,8 @@ export default function OrderDetail() {
   return (
     <div className="container mx-auto px-4 md:px-6 py-8 md:py-12 max-w-4xl">
       <div className="mb-6">
-        <Link href="/orders" className="text-sm text-muted-foreground hover:text-foreground hover:underline">
-          &larr; Back to Orders
+        <Link href={user ? "/orders" : "/"} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+          &larr; {user ? "Back to Orders" : "Back to Shop"}
         </Link>
       </div>
 

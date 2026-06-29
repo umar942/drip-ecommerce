@@ -75,14 +75,27 @@ export interface WishlistItem {
   createdAt: Date;
 }
 
+export interface GuestAddress {
+  line1: string;
+  line2: string | null;
+  city: string;
+  state: string;
+  country: string;
+  zip: string;
+}
+
 export interface Order {
   id: number;
-  userId: number;
+  userId: number | null;
   totalPrice: number;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   addressId: number | null;
   paymentMethod: string;
+  guestName: string | null;
+  guestEmail: string | null;
+  guestPhone: string | null;
+  guestAddress: GuestAddress | null;
   createdAt: Date;
   updatedAt: Date;
 }

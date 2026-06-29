@@ -124,7 +124,7 @@ export default function AdminDashboard() {
               {recentOrders?.map(order => (
                 <tr key={order.id} className="border-b border-border/20 hover:bg-secondary/20 transition-colors">
                   <td className="px-4 py-4 font-mono">#{order.id}</td>
-                  <td className="px-4 py-4">{order.user?.name || `User ${order.userId}`}</td>
+                  <td className="px-4 py-4">{order.user?.name || order.guestName || `User ${order.userId}`}</td>
                   <td className="px-4 py-4 text-muted-foreground">{format(new Date(order.createdAt), "MMM dd, yyyy")}</td>
                   <td className="px-4 py-4 font-bold">{formatPrice(order.totalPrice)}</td>
                   <td className="px-4 py-4">

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
-import { useGetCart, getGetCartQueryKey } from "@workspace/api-client-react";
+import { useCart } from "@/lib/cart";
 import { ShoppingBag, User, Heart, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -10,15 +10,7 @@ export function Navbar() {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const { data: cart } = useGetCart({
-    query: {
-      queryKey: getGetCartQueryKey(),
-      enabled: !!user,
-    },
-  });
-
-  const cartItemCount = cart?.itemCount || 0;
+  const { itemCount: cartItemCount } = useCart();
 
   const handleLogout = () => {
     logout();
@@ -73,23 +65,23 @@ export function Navbar() {
                 </Button>
               </Link>
             )}
-            
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative text-foreground/80 hover:text-primary">
-                <ShoppingBag className="h-5 w-5" />
-                {cartItemCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                    {cartItemCount}
-                  </span>
-                )}
-                <span className="sr-only">Cart</span>
-              </Button>
-            </Link>
           </div>
 
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Link href="/cart">
+            <Button variant="ghost" size="icon" className="relative text-foreground/80 hover:text-primary">
+              <ShoppingBag className="h-5 w-5" />
+              {cartItemCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                  {cartItemCount}
+                </span>
+              )}
+              <span className="sr-only">Cart</span>
+            </Button>
+          </Link>
+
+          <Button
+            variant="ghost"
+            size="icon"
             className="md:hidden text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -137,6 +129,9 @@ export function Navbar() {
                   Log In / Register
                 </Link>
               )}
+              <Link href="/track-order" className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                Track Order
+              </Link>
             </nav>
           </motion.div>
         )}

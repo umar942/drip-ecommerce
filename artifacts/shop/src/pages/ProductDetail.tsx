@@ -1,8 +1,10 @@
-import { useGetProduct, useAddToCart, useAddToWishlist, getGetCartQueryKey, getGetWishlistQueryKey, getGetProductQueryKey } from "@workspace/api-client-react";
+import { useGetProduct, useAddToWishlist, getGetWishlistQueryKey, getGetProductQueryKey } from "@workspace/api-client-react";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { useCart } from "@/lib/cart";
+import { useLoginPrompt } from "@/lib/login-prompt";
 import { ShoppingBag, Heart, Check } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -15,11 +17,14 @@ export default function ProductDetail() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+  const cart = useCart();
+  const { maybePrompt } = useLoginPrompt();
+
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [mainImageIdx, setMainImageIdx] = useState(0);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const { data: product, isLoading } = useGetProduct(Number(id), {
     query: {
@@ -28,7 +33,6 @@ export default function ProductDetail() {
     },
   });
 
-  const addToCart = useAddToCart();
   const addToWishlist = useAddToWishlist();
 
   if (isLoading) {
@@ -48,35 +52,37 @@ export default function ProductDetail() {
     );
   }
 
-  const handleAddToCart = () => {
-    if (!user) {
-      setLocation("/login");
-      return;
-    }
-    
+  const handleAddToCart = async () => {
     if (product.sizes?.length && !selectedSize) {
       toast({ title: "Please select a size", variant: "destructive" });
       return;
     }
-    
+
     if (product.colors?.length && !selectedColor) {
       toast({ title: "Please select a color", variant: "destructive" });
       return;
     }
 
-    addToCart.mutate({
-      data: {
+    setIsAddingToCart(true);
+    try {
+      await cart.addItem({
         productId: product.id,
         quantity,
         size: selectedSize || undefined,
-        color: selectedColor || undefined
-      }
-    }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getGetCartQueryKey() });
-        toast({ title: "Added to cart", description: `${product.title} has been added to your cart.` });
-      }
-    });
+        color: selectedColor || undefined,
+        product,
+      });
+      toast({ title: "Added to cart", description: `${product.title} has been added to your cart.` });
+      if (!user) maybePrompt();
+    } catch (err) {
+      toast({
+        title: "Could not add to cart",
+        description: err instanceof Error ? err.message : "Try again",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const handleAddToWishlist = () => {
@@ -196,12 +202,12 @@ export default function ProductDetail() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button 
-                onClick={handleAddToCart} 
-                disabled={addToCart.isPending || product.stock <= 0}
+              <Button
+                onClick={handleAddToCart}
+                disabled={isAddingToCart || product.stock <= 0}
                 className="flex-1 h-14 rounded-none text-sm font-bold uppercase tracking-widest"
               >
-                {addToCart.isPending ? <div className="h-5 w-5 animate-spin border-y-2 border-primary-foreground rounded-full" /> : 
+                {isAddingToCart ? <div className="h-5 w-5 animate-spin border-y-2 border-primary-foreground rounded-full" /> :
                   product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
               </Button>
               <Button 
