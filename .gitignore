@@ -54,3 +54,6 @@ Thumbs.db
 # User-uploaded product images (local dev)
 artifacts/shop/public/uploads/products/*
 !artifacts/shop/public/uploads/products/.gitkeep
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat

@@ -11,6 +11,7 @@ import { AdminAppShell } from "./components/layout/AdminAppShell";
 import { AdminLayout } from "./components/layout/AdminLayout";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute";
 import { StorefrontGuard } from "./components/shared/StorefrontGuard";
+import { ScrollToTop } from "./components/shared/ScrollToTop";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -116,6 +117,7 @@ function App() {
           <LoginPromptProvider>
             <TooltipProvider>
               <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <ScrollToTop />
                 <Router />
               </WouterRouter>
               <LoginPromptDialog />
