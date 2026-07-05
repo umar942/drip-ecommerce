@@ -113,7 +113,7 @@ function wrapLayout(opts: {
   <!-- Footer -->
   <tr>
     <td align="center" style="padding:20px 32px 28px;background-color:${LIGHT};border-top:1px solid ${BORDER};">
-      <p style="margin:0 0 4px;font-family:Arial,sans-serif;font-size:11px;font-weight:bold;color:${BLACK};letter-spacing:2px;text-transform:uppercase;">Define Your Identity</p>
+      <p style="margin:0 0 4px;font-family:Arial,sans-serif;font-size:8px;font-weight:bold;color:${BLACK};letter-spacing:2px;text-transform:uppercase;">Define Your Identity</p>
       <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:${GRAY};">Premium Streetwear &bull; &copy; ${new Date().getFullYear()} DRIP</p>
     </td>
   </tr>

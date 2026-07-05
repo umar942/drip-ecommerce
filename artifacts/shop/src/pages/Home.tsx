@@ -26,7 +26,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="font-display text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-white drop-shadow-xl uppercase mb-6"
+            className="font-display text-4xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter text-white drop-shadow-xl uppercase mb-6"
           >
             Define Your <span className="text-primary">Identity</span>
           </motion.h1>
