@@ -1,21 +1,28 @@
 import { useListProducts, getListProductsQueryKey } from "@workspace/api-client-react";
-import { useLocation } from "wouter";
+import { useSearch } from "wouter";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { formatPrice } from "@/lib/currency";
 
 export default function Products() {
-  const [searchParams] = useState(() => new URLSearchParams(window.location.search));
-  const categoryParam = searchParams.get("category");
-  
+  const queryString = useSearch();
+  const categoryParam = useMemo(
+    () => new URLSearchParams(queryString).get("category") || "all",
+    [queryString]
+  );
+
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<string>(categoryParam || "all");
+  const [category, setCategory] = useState<string>(categoryParam);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    setCategory(categoryParam);
+  }, [categoryParam]);
 
   const { data: productsData, isLoading } = useListProducts({
     category: category !== "all" ? category : undefined,
